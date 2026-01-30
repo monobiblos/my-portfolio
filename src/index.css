@@ -1,0 +1,192 @@
+/* CSS 초기화 */
+* {
+  box-sizing: border-box;
+}
+
+/* 글리치 스타일 CSS 변수 */
+:root {
+  /* 기본 컬러 */
+  --color-black: #000000;
+  --color-white: #FFFFFF;
+  --color-gray-100: #F4F4F5;
+  --color-gray-200: #E4E4E7;
+  --color-gray-300: #D4D4D8;
+  --color-gray-400: #A1A1AA;
+  --color-gray-500: #71717A;
+  --color-gray-600: #52525B;
+  --color-gray-700: #3F3F46;
+  --color-gray-800: #27272A;
+  --color-gray-900: #18181B;
+
+  /* 강조 컬러 - 연보라 */
+  --color-accent-50: #F5F3FF;
+  --color-accent-100: #EDE9FE;
+  --color-accent-200: #DDD6FE;
+  --color-accent-300: #C4B5FD;
+  --color-accent-400: #A78BFA;
+  --color-accent-500: #8B5CF6;
+  --color-accent-600: #7C3AED;
+  --color-accent-700: #6D28D9;
+
+  /* 글리치 효과용 컬러 */
+  --glitch-color-1: #FF0080;
+  --glitch-color-2: #00FFFF;
+
+  /* 배경 */
+  --bg-primary: var(--color-black);
+  --bg-secondary: #0A0A0A;
+  --bg-card: #0F0F0F;
+
+  /* 텍스트 */
+  --text-primary: var(--color-white);
+  --text-secondary: var(--color-gray-400);
+
+  /* 폰트 */
+  font-family: 'Roboto Mono', 'Roboto', system-ui, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+
+  color-scheme: dark;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* HTML, Body 초기화 */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* Root 앱 컨테이너 설정 */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 링크 스타일 */
+a {
+  font-weight: 500;
+  color: var(--color-accent-300);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-accent-400);
+}
+
+/* 글리치 텍스트 효과 */
+@keyframes glitch {
+  0% {
+    text-shadow:
+      2px 0 var(--glitch-color-1),
+      -2px 0 var(--glitch-color-2);
+  }
+  20% {
+    text-shadow:
+      -2px 0 var(--glitch-color-1),
+      2px 0 var(--glitch-color-2);
+  }
+  40% {
+    text-shadow:
+      2px 0 var(--glitch-color-1),
+      -2px 0 var(--glitch-color-2);
+  }
+  60% {
+    text-shadow:
+      -2px 0 var(--glitch-color-1),
+      2px 0 var(--glitch-color-2);
+  }
+  80% {
+    text-shadow:
+      2px 0 var(--glitch-color-1),
+      -2px 0 var(--glitch-color-2);
+  }
+  100% {
+    text-shadow:
+      -2px 0 var(--glitch-color-1),
+      2px 0 var(--glitch-color-2);
+  }
+}
+
+.glitch-text {
+  animation: glitch 0.3s infinite;
+}
+
+.glitch-text:hover {
+  animation: glitch 0.1s infinite;
+}
+
+/* 글리치 라인 효과 */
+@keyframes glitch-line {
+  0%, 100% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* 스캔라인 효과 */
+.scanlines::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(255, 255, 255, 0.03) 2px,
+    rgba(255, 255, 255, 0.03) 4px
+  );
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 섹션 구분선 */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--color-accent-300),
+    transparent
+  );
+  margin: 4rem 0;
+}
+
+/* 스크롤바 스타일 */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gray-700);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-accent-400);
+}
+
+/* 선택 영역 스타일 */
+::selection {
+  background: var(--color-accent-400);
+  color: var(--color-black);
+}
