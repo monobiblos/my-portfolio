@@ -116,7 +116,7 @@ function Header() {
                   borderRadius: 0,
                   px: 2,
                   '&:hover': {
-                    backgroundColor: 'rgba(196, 181, 253, 0.1)',
+                    backgroundColor: 'rgba(139, 92, 246, 0.08)',
                   },
                 }}
               >

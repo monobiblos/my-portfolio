@@ -119,7 +119,7 @@ function ContactSection() {
       id="contact"
       sx={{
         py: { xs: 8, md: 12 },
-        backgroundColor: '#000',
+        backgroundColor: 'background.paper',
       }}
     >
       <Container maxWidth="lg">
@@ -140,7 +140,7 @@ function ContactSection() {
           sx={{
             fontSize: { xs: '2rem', md: '2.5rem' },
             mb: 2,
-            color: '#fff',
+            color: 'text.primary',
             textAlign: 'center',
             fontWeight: 700,
           }}
@@ -150,7 +150,7 @@ function ContactSection() {
         <Typography
           variant="body1"
           sx={{
-            color: 'rgba(255,255,255,0.7)',
+            color: 'text.secondary',
             textAlign: 'center',
             mb: 6,
             maxWidth: 600,
@@ -169,12 +169,13 @@ function ContactSection() {
               rel="noopener noreferrer"
               aria-label={social.label}
               sx={{
-                color: 'rgba(255,255,255,0.7)',
-                border: '1px solid rgba(255,255,255,0.2)',
+                color: 'text.secondary',
+                border: '1px solid',
+                borderColor: 'divider',
                 '&:hover': {
                   color: 'primary.main',
                   borderColor: 'primary.main',
-                  backgroundColor: 'rgba(139, 92, 246, 0.1)',
+                  backgroundColor: 'rgba(139, 92, 246, 0.08)',
                 },
               }}
             >
@@ -187,15 +188,13 @@ function ContactSection() {
           <Grid size={{ xs: 12, md: 5 }}>
             <Card
               sx={{
-                backgroundColor: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
                 height: '100%',
               }}
             >
               <CardContent sx={{ p: { xs: 3, md: 4 } }}>
                 <Typography
                   variant="h6"
-                  sx={{ color: '#fff', mb: 3, fontWeight: 600 }}
+                  sx={{ color: 'text.primary', mb: 3, fontWeight: 600 }}
                 >
                   메시지 남기기
                 </Typography>
@@ -208,19 +207,9 @@ function ContactSection() {
                     value={formData.author_name}
                     onChange={handleInputChange}
                     InputProps={{
-                      startAdornment: <PersonIcon sx={{ color: 'rgba(255,255,255,0.5)', mr: 1 }} />,
+                      startAdornment: <PersonIcon sx={{ color: 'text.secondary', mr: 1 }} />,
                     }}
-                    sx={{
-                      mb: 2,
-                      '& .MuiOutlinedInput-root': {
-                        color: '#fff',
-                        '& fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
-                        '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.4)' },
-                        '&.Mui-focused fieldset': { borderColor: 'primary.main' },
-                      },
-                      '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.5)' },
-                      '& .MuiInputLabel-root.Mui-focused': { color: 'primary.main' },
-                    }}
+                    sx={{ mb: 2 }}
                   />
                   <TextField
                     fullWidth
@@ -232,19 +221,9 @@ function ContactSection() {
                     value={formData.message}
                     onChange={handleInputChange}
                     InputProps={{
-                      startAdornment: <EmailIcon sx={{ color: 'rgba(255,255,255,0.5)', mr: 1, alignSelf: 'flex-start', mt: 1 }} />,
+                      startAdornment: <EmailIcon sx={{ color: 'text.secondary', mr: 1, alignSelf: 'flex-start', mt: 1 }} />,
                     }}
-                    sx={{
-                      mb: 2,
-                      '& .MuiOutlinedInput-root': {
-                        color: '#fff',
-                        '& fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
-                        '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.4)' },
-                        '&.Mui-focused fieldset': { borderColor: 'primary.main' },
-                      },
-                      '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.5)' },
-                      '& .MuiInputLabel-root.Mui-focused': { color: 'primary.main' },
-                    }}
+                    sx={{ mb: 2 }}
                   />
                   <TextField
                     fullWidth
@@ -253,19 +232,9 @@ function ContactSection() {
                     value={formData.hobby}
                     onChange={handleInputChange}
                     InputProps={{
-                      startAdornment: <SportsEsportsIcon sx={{ color: 'rgba(255,255,255,0.5)', mr: 1 }} />,
+                      startAdornment: <SportsEsportsIcon sx={{ color: 'text.secondary', mr: 1 }} />,
                     }}
-                    sx={{
-                      mb: 2,
-                      '& .MuiOutlinedInput-root': {
-                        color: '#fff',
-                        '& fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
-                        '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.4)' },
-                        '&.Mui-focused fieldset': { borderColor: 'primary.main' },
-                      },
-                      '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.5)' },
-                      '& .MuiInputLabel-root.Mui-focused': { color: 'primary.main' },
-                    }}
+                    sx={{ mb: 2 }}
                   />
                   <TextField
                     fullWidth
@@ -275,19 +244,9 @@ function ContactSection() {
                     value={formData.sns_account}
                     onChange={handleInputChange}
                     InputProps={{
-                      startAdornment: <LinkIcon sx={{ color: 'rgba(255,255,255,0.5)', mr: 1 }} />,
+                      startAdornment: <LinkIcon sx={{ color: 'text.secondary', mr: 1 }} />,
                     }}
-                    sx={{
-                      mb: 3,
-                      '& .MuiOutlinedInput-root': {
-                        color: '#fff',
-                        '& fieldset': { borderColor: 'rgba(255,255,255,0.2)' },
-                        '&:hover fieldset': { borderColor: 'rgba(255,255,255,0.4)' },
-                        '&.Mui-focused fieldset': { borderColor: 'primary.main' },
-                      },
-                      '& .MuiInputLabel-root': { color: 'rgba(255,255,255,0.5)' },
-                      '& .MuiInputLabel-root.Mui-focused': { color: 'primary.main' },
-                    }}
+                    sx={{ mb: 3 }}
                   />
                   <Button
                     type="submit"
@@ -297,8 +256,6 @@ function ContactSection() {
                     endIcon={submitting ? <CircularProgress size={20} color="inherit" /> : <SendIcon />}
                     sx={{
                       py: 1.5,
-                      backgroundColor: 'primary.main',
-                      '&:hover': { backgroundColor: 'primary.dark' },
                     }}
                   >
                     {submitting ? '등록 중...' : '남기기'}
@@ -311,8 +268,6 @@ function ContactSection() {
           <Grid size={{ xs: 12, md: 7 }}>
             <Card
               sx={{
-                backgroundColor: 'rgba(255,255,255,0.05)',
-                border: '1px solid rgba(255,255,255,0.1)',
                 height: '100%',
                 minHeight: 400,
               }}
@@ -320,7 +275,7 @@ function ContactSection() {
               <CardContent sx={{ p: { xs: 3, md: 4 } }}>
                 <Typography
                   variant="h6"
-                  sx={{ color: '#fff', mb: 3, fontWeight: 600 }}
+                  sx={{ color: 'text.primary', mb: 3, fontWeight: 600 }}
                 >
                   방명록 목록
                 </Typography>
@@ -329,7 +284,7 @@ function ContactSection() {
                     <CircularProgress sx={{ color: 'primary.main' }} />
                   </Box>
                 ) : guestbookEntries.length === 0 ? (
-                  <Typography sx={{ color: 'rgba(255,255,255,0.5)', textAlign: 'center', py: 8 }}>
+                  <Typography sx={{ color: 'text.secondary', textAlign: 'center', py: 8 }}>
                     아직 방명록이 없습니다. 첫 번째 방문자가 되어주세요!
                   </Typography>
                 ) : (
@@ -340,13 +295,14 @@ function ContactSection() {
                           sx={{
                             p: 2,
                             borderRadius: 2,
-                            backgroundColor: 'rgba(255,255,255,0.03)',
-                            border: '1px solid rgba(255,255,255,0.08)',
+                            backgroundColor: 'background.default',
+                            border: '1px solid',
+                            borderColor: 'divider',
                             height: '100%',
                           }}
                         >
                           <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                            <Typography sx={{ color: '#fff', fontWeight: 600, fontSize: '0.95rem' }}>
+                            <Typography sx={{ color: 'text.primary', fontWeight: 600, fontSize: '0.95rem' }}>
                               {entry.author_name}
                             </Typography>
                             {entry.sns_account && (
@@ -367,14 +323,14 @@ function ContactSection() {
                             )}
                           </Box>
                           {entry.hobby && (
-                            <Typography sx={{ color: 'rgba(255,255,255,0.5)', fontSize: '0.75rem', mb: 1 }}>
+                            <Typography sx={{ color: 'text.secondary', fontSize: '0.75rem', mb: 1 }}>
                               {entry.hobby}
                             </Typography>
                           )}
-                          <Typography sx={{ color: 'rgba(255,255,255,0.8)', fontSize: '0.875rem', mb: 1, lineHeight: 1.6 }}>
+                          <Typography sx={{ color: 'text.primary', fontSize: '0.875rem', mb: 1, lineHeight: 1.6 }}>
                             {entry.message}
                           </Typography>
-                          <Typography sx={{ color: 'rgba(255,255,255,0.4)', fontSize: '0.7rem' }}>
+                          <Typography sx={{ color: 'text.secondary', fontSize: '0.7rem' }}>
                             {formatDate(entry.created_at)}
                           </Typography>
                         </Box>

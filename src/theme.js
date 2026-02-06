@@ -1,16 +1,16 @@
 import { createTheme } from '@mui/material/styles';
 
 /**
- * 글리치 스타일 테마
- * 블랙/화이트 기반 + 연보라색 강조
+ * 화이트모드 테마
+ * 밝은 배경 + 보라색 포인트 컬러 + Pretendard 폰트
  */
 const theme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: 'light',
     primary: {
-      main: '#C4B5FD',
-      light: '#DDD6FE',
-      dark: '#A78BFA',
+      main: '#8B5CF6',
+      light: '#A78BFA',
+      dark: '#7C3AED',
     },
     secondary: {
       main: '#A78BFA',
@@ -18,17 +18,18 @@ const theme = createTheme({
       dark: '#8B5CF6',
     },
     background: {
-      default: '#000000',
-      paper: '#0A0A0A',
+      default: '#EDEDED',
+      paper: '#FFFFFF',
     },
     text: {
-      primary: '#FFFFFF',
-      secondary: '#A1A1AA',
+      primary: '#1A1A2E',
+      secondary: '#64748B',
     },
-    divider: 'rgba(196, 181, 253, 0.2)',
+    divider: 'rgba(139, 92, 246, 0.15)',
   },
   typography: {
-    fontFamily: '"Roboto Mono", "Roboto", "Helvetica", "Arial", monospace',
+    fontFamily: '"Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif',
+    letterSpacing: '-0.01em',
     h1: {
       fontSize: '3rem',
       fontWeight: 700,
@@ -42,23 +43,30 @@ const theme = createTheme({
     h3: {
       fontSize: '1.5rem',
       fontWeight: 600,
+      letterSpacing: '-0.01em',
     },
     h4: {
       fontSize: '1.25rem',
       fontWeight: 500,
+      letterSpacing: '-0.01em',
     },
     body1: {
       fontSize: '1rem',
       lineHeight: 1.7,
+      letterSpacing: '-0.01em',
     },
     body2: {
       fontSize: '0.875rem',
       lineHeight: 1.6,
+      letterSpacing: '-0.01em',
+    },
+    button: {
+      letterSpacing: '-0.01em',
     },
   },
   spacing: 8,
   shape: {
-    borderRadius: 4,
+    borderRadius: 8,
   },
   components: {
     MuiButton: {
@@ -66,19 +74,19 @@ const theme = createTheme({
         root: {
           textTransform: 'none',
           fontWeight: 500,
-          borderRadius: 2,
+          borderRadius: 6,
         },
         contained: {
-          boxShadow: 'none',
+          boxShadow: '0 1px 3px rgba(139, 92, 246, 0.2)',
           '&:hover': {
-            boxShadow: '0 0 20px rgba(196, 181, 253, 0.4)',
+            boxShadow: '0 4px 12px rgba(139, 92, 246, 0.35)',
           },
         },
         outlined: {
-          borderColor: 'rgba(196, 181, 253, 0.5)',
+          borderColor: 'rgba(139, 92, 246, 0.4)',
           '&:hover': {
-            borderColor: '#C4B5FD',
-            backgroundColor: 'rgba(196, 181, 253, 0.1)',
+            borderColor: '#8B5CF6',
+            backgroundColor: 'rgba(139, 92, 246, 0.08)',
           },
         },
       },
@@ -86,10 +94,12 @@ const theme = createTheme({
     MuiCard: {
       styleOverrides: {
         root: {
-          backgroundColor: '#0A0A0A',
-          border: '1px solid rgba(196, 181, 253, 0.15)',
+          backgroundColor: '#FFFFFF',
+          border: '1px solid rgba(139, 92, 246, 0.12)',
+          boxShadow: '0 1px 3px rgba(0, 0, 0, 0.05)',
           '&:hover': {
-            borderColor: 'rgba(196, 181, 253, 0.4)',
+            borderColor: 'rgba(139, 92, 246, 0.3)',
+            boxShadow: '0 4px 16px rgba(139, 92, 246, 0.12)',
           },
         },
       },
@@ -97,9 +107,17 @@ const theme = createTheme({
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: 'rgba(0, 0, 0, 0.9)',
+          backgroundColor: 'rgba(255, 255, 255, 0.9)',
           backdropFilter: 'blur(10px)',
-          borderBottom: '1px solid rgba(196, 181, 253, 0.15)',
+          borderBottom: '1px solid rgba(139, 92, 246, 0.12)',
+          color: '#1A1A2E',
+        },
+      },
+    },
+    MuiChip: {
+      styleOverrides: {
+        root: {
+          fontWeight: 500,
         },
       },
     },
