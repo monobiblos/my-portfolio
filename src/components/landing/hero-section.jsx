@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 
 /**
- * HeroSection 컴포넌트 - 3D 크리스탈 메인 비주얼 섹션
+ * HeroSection 컴포넌트 - 3D 브릴리언트 컷 다이아몬드 메인 비주얼 섹션
  *
  * Props: 없음
  *
@@ -31,7 +31,7 @@ function HeroSection() {
       0.1,
       100
     );
-    camera.position.z = 5;
+    camera.position.set(0, 0.5, 5);
 
     // Renderer
     const renderer = new THREE.WebGLRenderer({
@@ -41,148 +41,328 @@ function HeroSection() {
     });
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.8;
 
-    // Lighting
-    scene.add(new THREE.AmbientLight(0xffffff, 0.5));
+    // 환경 맵 생성 (그라데이션 큐브맵 시뮬레이션)
+    const cubeRenderTarget = new THREE.WebGLCubeRenderTarget(256);
+    const cubeCamera = new THREE.CubeCamera(0.1, 10, cubeRenderTarget);
 
-    // Main Light
-    const light = new THREE.DirectionalLight(0xffffff, 1.5);
-    light.position.set(5, 5, 5);
-    scene.add(light);
+    // 환경용 그라데이션 구 생성 (더 밝은 환경)
+    const envGeometry = new THREE.SphereGeometry(50, 32, 32);
+    const envMaterial = new THREE.ShaderMaterial({
+      side: THREE.BackSide,
+      uniforms: {
+        topColor: { value: new THREE.Color(0x6e6e8a) },
+        bottomColor: { value: new THREE.Color(0x3a3a4a) },
+        offset: { value: 0 },
+        exponent: { value: 0.6 },
+      },
+      vertexShader: `
+        varying vec3 vWorldPosition;
+        void main() {
+          vec4 worldPosition = modelMatrix * vec4(position, 1.0);
+          vWorldPosition = worldPosition.xyz;
+          gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+        }
+      `,
+      fragmentShader: `
+        uniform vec3 topColor;
+        uniform vec3 bottomColor;
+        uniform float offset;
+        uniform float exponent;
+        varying vec3 vWorldPosition;
+        void main() {
+          float h = normalize(vWorldPosition + offset).y;
+          gl_FragColor = vec4(mix(bottomColor, topColor, max(pow(max(h, 0.0), exponent), 0.0)), 1.0);
+        }
+      `,
+    });
+    const envMesh = new THREE.Mesh(envGeometry, envMaterial);
+    scene.add(envMesh);
 
-    // Rim Light (엣지 강조용 - 보라색 톤)
-    const rim = new THREE.PointLight(0xc4b5fd, 2.0);
-    rim.position.set(-5, -5, 5);
-    scene.add(rim);
+    // 환경 맵 업데이트
+    envMesh.visible = true;
+    cubeCamera.position.set(0, 0, 0);
+    cubeCamera.update(renderer, scene);
 
-    // 보라색 포인트 라이트
-    const purpleLight = new THREE.PointLight(0xa78bfa, 1.5);
-    purpleLight.position.set(3, -3, 3);
-    scene.add(purpleLight);
+    // Lighting (더 밝게)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 1.2);
+    scene.add(ambientLight);
 
-    // 추가 하이라이트 라이트 (반짝임용)
-    const highlightLight = new THREE.PointLight(0xffffff, 2.0);
-    highlightLight.position.set(0, 3, 3);
-    scene.add(highlightLight);
+    // 메인 조명 (상단) - 강화
+    const mainLight = new THREE.DirectionalLight(0xffffff, 3.5);
+    mainLight.position.set(2, 5, 3);
+    scene.add(mainLight);
 
-    // Crystal Material - 다이아몬드 유리
-    const material = new THREE.MeshPhysicalMaterial({
+    // 추가 메인 조명 (전면)
+    const frontLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    frontLight.position.set(0, 2, 5);
+    scene.add(frontLight);
+
+    // 보조 조명들 (반짝임 효과용)
+    const light1 = new THREE.PointLight(0xffffff, 3.0, 15);
+    light1.position.set(-3, 2, 3);
+    scene.add(light1);
+
+    const light2 = new THREE.PointLight(0xffffff, 2.5, 15);
+    light2.position.set(3, -1, 2);
+    scene.add(light2);
+
+    const light3 = new THREE.PointLight(0xffffff, 4.0, 10);
+    light3.position.set(0, 3, 2);
+    scene.add(light3);
+
+    // 핑크/블루 색상 조명 (이미지의 색감 반영) - 약하게
+    const pinkLight = new THREE.PointLight(0xffc0cb, 0.8, 12);
+    pinkLight.position.set(2, 0, -2);
+    scene.add(pinkLight);
+
+    const blueLight = new THREE.PointLight(0xc0d8ff, 0.8, 12);
+    blueLight.position.set(-2, 1, -2);
+    scene.add(blueLight);
+
+    // 브릴리언트 컷 다이아몬드 지오메트리 생성
+    const createBrilliantCutDiamond = () => {
+      const vertices = [];
+      const indices = [];
+
+      // 다이아몬드 비율 (브릴리언트 컷 기준)
+      const crownHeight = 0.35;
+      const pavilionDepth = 0.85;
+      const tableRadius = 0.5;
+      const girdleRadius = 1.0;
+      const totalHeight = crownHeight + pavilionDepth;
+
+      // 중심점들
+      const tableCenter = crownHeight;
+      const girdleLevel = 0;
+      const culetPoint = -pavilionDepth;
+
+      // 16면 브릴리언트 컷 (각도)
+      const numSides = 16;
+      const angleStep = (Math.PI * 2) / numSides;
+
+      // 정점 인덱스 추적
+      let vertexIndex = 0;
+
+      // 테이블 중심점
+      vertices.push(0, tableCenter, 0);
+      const tableCenterIndex = vertexIndex++;
+
+      // 테이블 정점들 (8개)
+      const tableVertices = [];
+      for (let i = 0; i < 8; i++) {
+        const angle = i * (Math.PI * 2) / 8;
+        vertices.push(
+          Math.cos(angle) * tableRadius,
+          tableCenter,
+          Math.sin(angle) * tableRadius
+        );
+        tableVertices.push(vertexIndex++);
+      }
+
+      // 스타 패싯 정점들 (8개 - 테이블과 거들 사이)
+      const starVertices = [];
+      for (let i = 0; i < 8; i++) {
+        const angle = i * (Math.PI * 2) / 8 + (Math.PI / 8);
+        const radius = (tableRadius + girdleRadius) * 0.5;
+        const height = tableCenter * 0.6;
+        vertices.push(
+          Math.cos(angle) * radius,
+          height,
+          Math.sin(angle) * radius
+        );
+        starVertices.push(vertexIndex++);
+      }
+
+      // 거들 정점들 (16개)
+      const girdleVertices = [];
+      for (let i = 0; i < numSides; i++) {
+        const angle = i * angleStep;
+        vertices.push(
+          Math.cos(angle) * girdleRadius,
+          girdleLevel,
+          Math.sin(angle) * girdleRadius
+        );
+        girdleVertices.push(vertexIndex++);
+      }
+
+      // 파빌리온 메인 패싯 정점들 (8개)
+      const pavilionMainVertices = [];
+      for (let i = 0; i < 8; i++) {
+        const angle = i * (Math.PI * 2) / 8;
+        const radius = girdleRadius * 0.4;
+        const height = culetPoint * 0.5;
+        vertices.push(
+          Math.cos(angle) * radius,
+          height,
+          Math.sin(angle) * radius
+        );
+        pavilionMainVertices.push(vertexIndex++);
+      }
+
+      // 큘렛 (바닥 꼭짓점)
+      vertices.push(0, culetPoint, 0);
+      const culetIndex = vertexIndex++;
+
+      // === 면 생성 ===
+
+      // 테이블 면 (8개 삼각형)
+      for (let i = 0; i < 8; i++) {
+        const next = (i + 1) % 8;
+        indices.push(tableCenterIndex, tableVertices[i], tableVertices[next]);
+      }
+
+      // 스타 패싯 (테이블 → 스타)
+      for (let i = 0; i < 8; i++) {
+        const next = (i + 1) % 8;
+        indices.push(tableVertices[i], starVertices[i], tableVertices[next]);
+        indices.push(tableVertices[next], starVertices[i], starVertices[next]);
+      }
+
+      // 베젤 패싯 (스타 → 거들)
+      for (let i = 0; i < 8; i++) {
+        const g1 = i * 2;
+        const g2 = i * 2 + 1;
+        const g3 = ((i + 1) * 2) % numSides;
+
+        indices.push(starVertices[i], girdleVertices[g1], girdleVertices[g2]);
+        indices.push(starVertices[i], girdleVertices[g2], starVertices[(i + 1) % 8]);
+        indices.push(starVertices[(i + 1) % 8], girdleVertices[g2], girdleVertices[g3]);
+      }
+
+      // 파빌리온 메인 패싯 (거들 → 파빌리온 메인)
+      for (let i = 0; i < 8; i++) {
+        const g1 = i * 2;
+        const g2 = i * 2 + 1;
+        const g3 = ((i + 1) * 2) % numSides;
+
+        indices.push(girdleVertices[g1], pavilionMainVertices[i], girdleVertices[g2]);
+        indices.push(girdleVertices[g2], pavilionMainVertices[i], pavilionMainVertices[(i + 1) % 8]);
+        indices.push(girdleVertices[g2], pavilionMainVertices[(i + 1) % 8], girdleVertices[g3]);
+      }
+
+      // 파빌리온 하단 패싯 (파빌리온 메인 → 큘렛)
+      for (let i = 0; i < 8; i++) {
+        const next = (i + 1) % 8;
+        indices.push(pavilionMainVertices[i], culetIndex, pavilionMainVertices[next]);
+      }
+
+      // BufferGeometry 생성
+      const geometry = new THREE.BufferGeometry();
+      geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+      geometry.setIndex(indices);
+      geometry.computeVertexNormals();
+
+      return geometry;
+    };
+
+    // 다이아몬드 재질 (밝고 투명한 크리스탈)
+    const diamondMaterial = new THREE.MeshPhysicalMaterial({
+      color: 0xffffff,
+      metalness: 0.0,
+      roughness: 0.02,
+      transmission: 0.82,
+      transparent: true,
+      opacity: 0.9,
+      thickness: 0.6,
+      envMap: cubeRenderTarget.texture,
+      envMapIntensity: 3.5,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.0,
+      ior: 2.417, // 다이아몬드의 실제 굴절률
+      reflectivity: 1.0,
+      specularIntensity: 2.0,
+      specularColor: new THREE.Color(0xffffff),
+      side: THREE.DoubleSide,
+      attenuationColor: new THREE.Color(0xffffff),
+      attenuationDistance: 1.2,
+      sheen: 0.3,
+      sheenColor: new THREE.Color(0xffffff),
+    });
+
+    // 다이아몬드 메시 생성
+    const diamondGeometry = createBrilliantCutDiamond();
+    const diamond = new THREE.Mesh(diamondGeometry, diamondMaterial);
+    diamond.scale.set(1.3, 1.3, 1.3);
+    diamond.rotation.x = 0.15;
+    diamond.rotation.z = 0.05;
+    scene.add(diamond);
+
+    // 내부 반사용 작은 다이아몬드 (투명하게)
+    const innerMaterial = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
       metalness: 0.0,
       roughness: 0.0,
-      transmission: 0.95,
+      transmission: 0.7,
       transparent: true,
-      opacity: 0.6,
-      thickness: 0.5,
-      envMapIntensity: 3.0,
-      clearcoat: 1,
-      clearcoatRoughness: 0.0,
-      ior: 2.417,
-      reflectivity: 1.0,
-      side: THREE.DoubleSide,
+      opacity: 0.4,
+      thickness: 0.3,
+      envMap: cubeRenderTarget.texture,
+      envMapIntensity: 2.5,
+      ior: 2.0,
+      side: THREE.BackSide,
+      specularIntensity: 1.5,
     });
 
-    // Diamond Shape Group
-    const diamond = new THREE.Group();
-    scene.add(diamond);
+    const innerDiamond = new THREE.Mesh(diamondGeometry, innerMaterial);
+    innerDiamond.scale.set(1.25, 1.25, 1.25);
+    innerDiamond.rotation.x = 0.15;
+    innerDiamond.rotation.z = 0.05;
+    scene.add(innerDiamond);
 
-    // 크라운 (상단) - 넓고 얕은 팔각형 피라미드
-    const crownGeometry = new THREE.ConeGeometry(1.0, 0.6, 8);
-    const crown = new THREE.Mesh(crownGeometry, material);
-    crown.position.y = 0.3;
-    crown.rotation.x = Math.PI;
-    diamond.add(crown);
+    // 반짝임 파티클 효과
+    const sparkleCount = 50;
+    const sparkleGeometry = new THREE.BufferGeometry();
+    const sparklePositions = new Float32Array(sparkleCount * 3);
+    const sparkleSizes = new Float32Array(sparkleCount);
 
-    // 테이블 (상단 평면) - 얇은 팔각형
-    const tableGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.05, 8);
-    const table = new THREE.Mesh(tableGeometry, material);
-    table.position.y = 0.6;
-    diamond.add(table);
-
-    // 파빌리온 (하단) - 길고 뾰족한 팔각형 피라미드
-    const pavilionGeometry = new THREE.ConeGeometry(1.0, 1.8, 8);
-    const pavilion = new THREE.Mesh(pavilionGeometry, material);
-    pavilion.position.y = -0.9;
-    diamond.add(pavilion);
-
-    // 거들 (중간 띠) - 얇은 팔각형 기둥
-    const girdleGeometry = new THREE.CylinderGeometry(1.0, 1.0, 0.08, 8);
-    const girdle = new THREE.Mesh(girdleGeometry, material);
-    girdle.position.y = 0;
-    diamond.add(girdle);
-
-    // 다이아몬드 약간 기울임
-    diamond.rotation.x = 0.15;
-
-    // Shattered pieces - 작은 다이아몬드 파편들
-    const shards = [];
-    for (let i = 0; i < 12; i++) {
-      const shardMaterial = new THREE.MeshPhysicalMaterial({
-        color: i % 3 === 0 ? 0xc4b5fd : 0xffffff,
-        metalness: 0.0,
-        roughness: 0.0,
-        transmission: 0.9,
-        transparent: true,
-        opacity: 0.5 + Math.random() * 0.2,
-        thickness: 0.3,
-        clearcoat: 1,
-        ior: 2.417,
-        reflectivity: 1.0,
-        side: THREE.DoubleSide,
-      });
-
-      // 작은 다이아몬드 파편 (옥타헤드론)
-      const size = 0.1 + Math.random() * 0.15;
-      const shard = new THREE.Mesh(
-        new THREE.OctahedronGeometry(size, 0),
-        shardMaterial
-      );
-
-      const angle = (i / 12) * Math.PI * 2;
-      const radius2 = 1.8 + Math.random() * 0.6;
-      shard.position.set(
-        Math.cos(angle) * radius2,
-        (Math.random() - 0.5) * 2.5,
-        Math.sin(angle) * radius2
-      );
-
-      // 랜덤 회전
-      shard.rotation.x = Math.random() * Math.PI;
-      shard.rotation.z = Math.random() * Math.PI;
-
-      shard.userData.speed = 0.003 + Math.random() * 0.008;
-      shard.userData.angle = angle;
-      shard.userData.radius = radius2;
-      shard.userData.yOffset = shard.position.y;
-      shard.userData.rotSpeed = (Math.random() - 0.5) * 0.02;
-
-      scene.add(shard);
-      shards.push(shard);
+    for (let i = 0; i < sparkleCount; i++) {
+      const angle = Math.random() * Math.PI * 2;
+      const radius = 1.5 + Math.random() * 1.5;
+      sparklePositions[i * 3] = Math.cos(angle) * radius;
+      sparklePositions[i * 3 + 1] = (Math.random() - 0.5) * 2;
+      sparklePositions[i * 3 + 2] = Math.sin(angle) * radius;
+      sparkleSizes[i] = Math.random() * 3 + 1;
     }
+
+    sparkleGeometry.setAttribute('position', new THREE.BufferAttribute(sparklePositions, 3));
+    sparkleGeometry.setAttribute('size', new THREE.BufferAttribute(sparkleSizes, 1));
+
+    const sparkleMaterial = new THREE.PointsMaterial({
+      color: 0xffffff,
+      size: 0.05,
+      transparent: true,
+      opacity: 0.6,
+      blending: THREE.AdditiveBlending,
+      sizeAttenuation: true,
+    });
+
+    const sparkles = new THREE.Points(sparkleGeometry, sparkleMaterial);
+    scene.add(sparkles);
 
     // Animation
     let time = 0;
     function animate() {
       requestAnimationFrame(animate);
-      time += 0.01;
+      time += 0.008;
 
-      // Main diamond slow rotation
-      diamond.rotation.y += 0.002;
+      // 다이아몬드 천천히 회전
+      diamond.rotation.y += 0.003;
+      innerDiamond.rotation.y += 0.003;
 
-      // 하이라이트 라이트 움직임 (반짝임 효과)
-      highlightLight.position.x = Math.sin(time * 2) * 3;
-      highlightLight.position.y = Math.cos(time * 1.5) * 2 + 2;
-      highlightLight.intensity = 1.5 + Math.sin(time * 3) * 0.5;
+      // 조명 움직임 (반짝임 효과)
+      light3.position.x = Math.sin(time * 2) * 2;
+      light3.position.z = Math.cos(time * 1.5) * 2 + 2;
+      light3.intensity = 2.5 + Math.sin(time * 3) * 1.0;
 
-      // Shards orbit and float
-      shards.forEach((shard) => {
-        shard.userData.angle += shard.userData.speed;
-        shard.position.x = Math.cos(shard.userData.angle) * shard.userData.radius;
-        shard.position.z = Math.sin(shard.userData.angle) * shard.userData.radius;
-        shard.position.y = shard.userData.yOffset + Math.sin(time * 2 + shard.userData.angle) * 0.3;
-        shard.rotation.y += shard.userData.rotSpeed;
-        shard.rotation.x += shard.userData.rotSpeed * 0.5;
-      });
+      pinkLight.intensity = 1.2 + Math.sin(time * 2.5) * 0.5;
+      blueLight.intensity = 1.2 + Math.cos(time * 2) * 0.5;
+
+      // 파티클 반짝임
+      sparkles.rotation.y += 0.002;
+      sparkleMaterial.opacity = 0.4 + Math.sin(time * 4) * 0.2;
 
       renderer.render(scene, camera);
     }
@@ -200,15 +380,13 @@ function HeroSection() {
     return () => {
       window.removeEventListener('resize', handleResize);
       renderer.dispose();
-      crownGeometry.dispose();
-      tableGeometry.dispose();
-      pavilionGeometry.dispose();
-      girdleGeometry.dispose();
-      material.dispose();
-      shards.forEach((shard) => {
-        shard.geometry.dispose();
-        shard.material.dispose();
-      });
+      diamondGeometry.dispose();
+      diamondMaterial.dispose();
+      innerMaterial.dispose();
+      sparkleGeometry.dispose();
+      sparkleMaterial.dispose();
+      envGeometry.dispose();
+      envMaterial.dispose();
     };
   }, []);
 
