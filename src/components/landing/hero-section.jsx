@@ -3,15 +3,7 @@ import * as THREE from 'three';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
-import Tooltip from '@mui/material/Tooltip';
-import Fade from '@mui/material/Fade';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import GitHubIcon from '@mui/icons-material/GitHub';
-import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import EmailIcon from '@mui/icons-material/Email';
-import WorkIcon from '@mui/icons-material/Work';
 
 /**
  * HeroSection 컴포넌트 - 3D 브릴리언트 컷 다이아몬드 메인 비주얼 섹션
@@ -294,7 +286,7 @@ function HeroSection() {
     const diamondGeometry = createBrilliantCutDiamond();
     const diamond = new THREE.Mesh(diamondGeometry, diamondMaterial);
     diamond.scale.set(1.3, 1.3, 1.3);
-    diamond.position.y = 0.8; // 중앙보다 위로 이동
+    diamond.position.y = 1.0; // 20% 더 위로 이동 (0.8 → 1.0)
     diamond.rotation.x = 0.15;
     diamond.rotation.z = 0.05;
     scene.add(diamond);
@@ -309,7 +301,7 @@ function HeroSection() {
     });
     const edgeLines = new THREE.LineSegments(edgesGeometry, edgesMaterial);
     edgeLines.scale.set(1.3, 1.3, 1.3);
-    edgeLines.position.y = 0.8;
+    edgeLines.position.y = 1.0;
     edgeLines.rotation.x = 0.15;
     edgeLines.rotation.z = 0.05;
     scene.add(edgeLines);
@@ -332,40 +324,49 @@ function HeroSection() {
 
     const innerDiamond = new THREE.Mesh(diamondGeometry, innerMaterial);
     innerDiamond.scale.set(1.25, 1.25, 1.25);
-    innerDiamond.position.y = 0.8; // 중앙보다 위로 이동
+    innerDiamond.position.y = 1.0; // 20% 더 위로 이동
     innerDiamond.rotation.x = 0.15;
     innerDiamond.rotation.z = 0.05;
     scene.add(innerDiamond);
 
-    // 반짝임 파티클 효과
-    const sparkleCount = 50;
-    const sparkleGeometry = new THREE.BufferGeometry();
-    const sparklePositions = new Float32Array(sparkleCount * 3);
-    const sparkleSizes = new Float32Array(sparkleCount);
+    // 원형 파티클 효과 (Circle)
+    const circleCount = 50;
+    const circleGroup = new THREE.Group();
 
-    for (let i = 0; i < sparkleCount; i++) {
+    // 원형 파티클 생성
+    for (let i = 0; i < circleCount; i++) {
       const angle = Math.random() * Math.PI * 2;
       const radius = 1.5 + Math.random() * 1.5;
-      sparklePositions[i * 3] = Math.cos(angle) * radius;
-      sparklePositions[i * 3 + 1] = (Math.random() - 0.5) * 2 + 0.8; // 다이아몬드 위치에 맞춤
-      sparklePositions[i * 3 + 2] = Math.sin(angle) * radius;
-      sparkleSizes[i] = Math.random() * 3 + 1;
+      const size = 0.02 + Math.random() * 0.04;
+
+      const circleGeometry = new THREE.CircleGeometry(size, 16);
+      const circleMaterial = new THREE.MeshBasicMaterial({
+        color: 0xffffff,
+        transparent: true,
+        opacity: 0.4 + Math.random() * 0.3,
+        side: THREE.DoubleSide,
+      });
+
+      const circle = new THREE.Mesh(circleGeometry, circleMaterial);
+      circle.position.set(
+        Math.cos(angle) * radius,
+        (Math.random() - 0.5) * 2 + 1.0, // 다이아몬드 위치에 맞춤
+        Math.sin(angle) * radius
+      );
+
+      // 원이 항상 카메라를 향하도록 초기 회전
+      circle.lookAt(camera.position);
+
+      // 개별 애니메이션을 위한 사용자 데이터 저장
+      circle.userData = {
+        originalY: circle.position.y,
+        speed: 0.5 + Math.random() * 0.5,
+        phase: Math.random() * Math.PI * 2,
+      };
+
+      circleGroup.add(circle);
     }
-
-    sparkleGeometry.setAttribute('position', new THREE.BufferAttribute(sparklePositions, 3));
-    sparkleGeometry.setAttribute('size', new THREE.BufferAttribute(sparkleSizes, 1));
-
-    const sparkleMaterial = new THREE.PointsMaterial({
-      color: 0xffffff,
-      size: 0.05,
-      transparent: true,
-      opacity: 0.6,
-      blending: THREE.AdditiveBlending,
-      sizeAttenuation: true,
-    });
-
-    const sparkles = new THREE.Points(sparkleGeometry, sparkleMaterial);
-    scene.add(sparkles);
+    scene.add(circleGroup);
 
     // Animation
     let time = 0;
@@ -386,9 +387,17 @@ function HeroSection() {
       pinkLight.intensity = 1.2 + Math.sin(time * 2.5) * 0.5;
       blueLight.intensity = 1.2 + Math.cos(time * 2) * 0.5;
 
-      // 파티클 반짝임
-      sparkles.rotation.y += 0.002;
-      sparkleMaterial.opacity = 0.4 + Math.sin(time * 4) * 0.2;
+      // 원형 파티클 애니메이션
+      circleGroup.rotation.y += 0.002;
+      circleGroup.children.forEach((circle) => {
+        // 각 원이 카메라를 바라보도록 (Billboard 효과)
+        circle.lookAt(camera.position);
+        // 부드러운 위아래 움직임
+        const userData = circle.userData;
+        circle.position.y = userData.originalY + Math.sin(time * userData.speed + userData.phase) * 0.1;
+        // 반짝임 효과
+        circle.material.opacity = 0.3 + Math.sin(time * 3 + userData.phase) * 0.2;
+      });
 
       renderer.render(scene, camera);
     }
@@ -411,8 +420,11 @@ function HeroSection() {
       edgesGeometry.dispose();
       edgesMaterial.dispose();
       innerMaterial.dispose();
-      sparkleGeometry.dispose();
-      sparkleMaterial.dispose();
+      // 원형 파티클 정리
+      circleGroup.children.forEach((circle) => {
+        circle.geometry.dispose();
+        circle.material.dispose();
+      });
       envGeometry.dispose();
       envMaterial.dispose();
     };
@@ -424,20 +436,6 @@ function HeroSection() {
       behavior: 'smooth',
     });
   };
-
-  const handleScrollToSection = (sectionId) => {
-    const element = document.getElementById(sectionId);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
-
-  // 소셜 링크 데이터
-  const socialLinks = [
-    { icon: <GitHubIcon />, url: 'https://github.com', label: 'GitHub' },
-    { icon: <LinkedInIcon />, url: 'https://linkedin.com', label: 'LinkedIn' },
-    { icon: <EmailIcon />, url: 'mailto:example@email.com', label: 'Email' },
-  ];
 
   return (
     <Box
@@ -540,133 +538,6 @@ function HeroSection() {
           </Typography>
         </Box>
 
-        {/* CTA 버튼 영역 */}
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: 3,
-            mt: 4,
-            pointerEvents: 'auto',
-          }}
-        >
-          {/* 주요 CTA 버튼들 */}
-          <Box
-            sx={{
-              display: 'flex',
-              gap: { xs: 2, md: 3 },
-              flexWrap: 'wrap',
-              justifyContent: 'center',
-            }}
-          >
-            {/* Primary CTA - 프로젝트 보기 */}
-            <Button
-              variant="contained"
-              size="large"
-              startIcon={<WorkIcon />}
-              onClick={() => handleScrollToSection('projects')}
-              sx={{
-                px: { xs: 3, md: 4 },
-                py: { xs: 1.2, md: 1.5 },
-                fontSize: { xs: '0.9rem', md: '1rem' },
-                fontWeight: 600,
-                borderRadius: 2,
-                background: 'linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%)',
-                boxShadow: '0 4px 20px rgba(167, 139, 250, 0.4)',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-3px)',
-                  boxShadow: '0 8px 30px rgba(167, 139, 250, 0.6)',
-                  background: 'linear-gradient(135deg, #8b5cf6 0%, #a78bfa 100%)',
-                },
-                '&:active': {
-                  transform: 'translateY(-1px)',
-                },
-              }}
-            >
-              프로젝트 보기
-            </Button>
-
-            {/* Secondary CTA - 연락하기 */}
-            <Button
-              variant="outlined"
-              size="large"
-              startIcon={<EmailIcon />}
-              onClick={() => handleScrollToSection('contact')}
-              sx={{
-                px: { xs: 3, md: 4 },
-                py: { xs: 1.2, md: 1.5 },
-                fontSize: { xs: '0.9rem', md: '1rem' },
-                fontWeight: 600,
-                borderRadius: 2,
-                borderColor: 'rgba(196, 181, 253, 0.5)',
-                color: 'rgba(255, 255, 255, 0.9)',
-                backdropFilter: 'blur(10px)',
-                backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                transition: 'all 0.3s ease',
-                '&:hover': {
-                  transform: 'translateY(-3px)',
-                  borderColor: 'primary.main',
-                  backgroundColor: 'rgba(196, 181, 253, 0.15)',
-                  boxShadow: '0 4px 20px rgba(196, 181, 253, 0.3)',
-                },
-              }}
-            >
-              연락하기
-            </Button>
-          </Box>
-
-          {/* 소셜 링크 */}
-          <Box
-            sx={{
-              display: 'flex',
-              gap: 1.5,
-              mt: 1,
-            }}
-          >
-            {socialLinks.map((social) => (
-              <Tooltip
-                key={social.label}
-                title={social.label}
-                placement="bottom"
-                TransitionComponent={Fade}
-                arrow
-                slotProps={{
-                  tooltip: {
-                    sx: {
-                      bgcolor: 'rgba(0, 0, 0, 0.8)',
-                      fontSize: '0.75rem',
-                    },
-                  },
-                }}
-              >
-                <IconButton
-                  href={social.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={social.label}
-                  sx={{
-                    color: 'rgba(255, 255, 255, 0.6)',
-                    border: '1px solid rgba(255, 255, 255, 0.2)',
-                    backdropFilter: 'blur(10px)',
-                    backgroundColor: 'rgba(255, 255, 255, 0.05)',
-                    transition: 'all 0.3s ease',
-                    '&:hover': {
-                      color: 'primary.main',
-                      borderColor: 'primary.main',
-                      backgroundColor: 'rgba(196, 181, 253, 0.15)',
-                      transform: 'translateY(-3px) scale(1.1)',
-                      boxShadow: '0 4px 15px rgba(196, 181, 253, 0.3)',
-                    },
-                  }}
-                >
-                  {social.icon}
-                </IconButton>
-              </Tooltip>
-            ))}
-          </Box>
-        </Box>
       </Container>
 
       {/* Scroll Down Indicator */}
