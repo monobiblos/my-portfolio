@@ -65,69 +65,81 @@ function HeroSection() {
     highlightLight.position.set(0, 3, 3);
     scene.add(highlightLight);
 
-    // Crystal Material - 세로 긴 팔각형 유리
+    // Crystal Material - 다이아몬드 유리
     const material = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
-      metalness: 0.1,
+      metalness: 0.0,
       roughness: 0.0,
       transmission: 0.95,
       transparent: true,
-      opacity: 0.5,
-      thickness: 0.3,
-      envMapIntensity: 2.0,
+      opacity: 0.6,
+      thickness: 0.5,
+      envMapIntensity: 3.0,
       clearcoat: 1,
       clearcoatRoughness: 0.0,
-      ior: 2.4,
+      ior: 2.417,
       reflectivity: 1.0,
       side: THREE.DoubleSide,
     });
 
-    // Main Crystal - 세로로 긴 팔각형 기둥
-    // CylinderGeometry(radiusTop, radiusBottom, height, radialSegments)
-    const crystalGeometry = new THREE.CylinderGeometry(0.4, 0.4, 3, 8);
-    const crystal = new THREE.Mesh(crystalGeometry, material);
-    crystal.rotation.x = 0.2;
-    scene.add(crystal);
+    // Diamond Shape Group
+    const diamond = new THREE.Group();
+    scene.add(diamond);
 
-    // 상단/하단 뾰족한 끝 추가 (다이아몬드 느낌)
-    const topConeGeometry = new THREE.ConeGeometry(0.4, 0.8, 8);
-    const topCone = new THREE.Mesh(topConeGeometry, material);
-    topCone.position.y = 1.9;
-    crystal.add(topCone);
+    // 크라운 (상단) - 넓고 얕은 팔각형 피라미드
+    const crownGeometry = new THREE.ConeGeometry(1.0, 0.6, 8);
+    const crown = new THREE.Mesh(crownGeometry, material);
+    crown.position.y = 0.3;
+    crown.rotation.x = Math.PI;
+    diamond.add(crown);
 
-    const bottomConeGeometry = new THREE.ConeGeometry(0.4, 0.8, 8);
-    const bottomCone = new THREE.Mesh(bottomConeGeometry, material);
-    bottomCone.position.y = -1.9;
-    bottomCone.rotation.x = Math.PI;
-    crystal.add(bottomCone);
+    // 테이블 (상단 평면) - 얇은 팔각형
+    const tableGeometry = new THREE.CylinderGeometry(0.5, 0.5, 0.05, 8);
+    const table = new THREE.Mesh(tableGeometry, material);
+    table.position.y = 0.6;
+    diamond.add(table);
 
-    // Shattered pieces - 얇은 팔각형 파편들
+    // 파빌리온 (하단) - 길고 뾰족한 팔각형 피라미드
+    const pavilionGeometry = new THREE.ConeGeometry(1.0, 1.8, 8);
+    const pavilion = new THREE.Mesh(pavilionGeometry, material);
+    pavilion.position.y = -0.9;
+    diamond.add(pavilion);
+
+    // 거들 (중간 띠) - 얇은 팔각형 기둥
+    const girdleGeometry = new THREE.CylinderGeometry(1.0, 1.0, 0.08, 8);
+    const girdle = new THREE.Mesh(girdleGeometry, material);
+    girdle.position.y = 0;
+    diamond.add(girdle);
+
+    // 다이아몬드 약간 기울임
+    diamond.rotation.x = 0.15;
+
+    // Shattered pieces - 작은 다이아몬드 파편들
     const shards = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 12; i++) {
       const shardMaterial = new THREE.MeshPhysicalMaterial({
         color: i % 3 === 0 ? 0xc4b5fd : 0xffffff,
-        metalness: 0.1,
+        metalness: 0.0,
         roughness: 0.0,
         transmission: 0.9,
         transparent: true,
-        opacity: 0.4 + Math.random() * 0.2,
-        thickness: 0.2,
+        opacity: 0.5 + Math.random() * 0.2,
+        thickness: 0.3,
         clearcoat: 1,
-        ior: 2.0,
+        ior: 2.417,
         reflectivity: 1.0,
         side: THREE.DoubleSide,
       });
 
-      // 얇고 긴 팔각형 파편
-      const height = 0.3 + Math.random() * 0.5;
-      const radius = 0.08 + Math.random() * 0.1;
+      // 작은 다이아몬드 파편 (옥타헤드론)
+      const size = 0.1 + Math.random() * 0.15;
       const shard = new THREE.Mesh(
-        new THREE.CylinderGeometry(radius, radius, height, 8),
+        new THREE.OctahedronGeometry(size, 0),
         shardMaterial
       );
 
-      const angle = (i / 10) * Math.PI * 2;
-      const radius2 = 1.5 + Math.random() * 0.8;
+      const angle = (i / 12) * Math.PI * 2;
+      const radius2 = 1.8 + Math.random() * 0.6;
       shard.position.set(
         Math.cos(angle) * radius2,
         (Math.random() - 0.5) * 2.5,
@@ -154,8 +166,8 @@ function HeroSection() {
       requestAnimationFrame(animate);
       time += 0.01;
 
-      // Main crystal slow rotation
-      crystal.rotation.y += 0.002;
+      // Main diamond slow rotation
+      diamond.rotation.y += 0.002;
 
       // 하이라이트 라이트 움직임 (반짝임 효과)
       highlightLight.position.x = Math.sin(time * 2) * 3;
@@ -188,9 +200,10 @@ function HeroSection() {
     return () => {
       window.removeEventListener('resize', handleResize);
       renderer.dispose();
-      crystalGeometry.dispose();
-      topConeGeometry.dispose();
-      bottomConeGeometry.dispose();
+      crownGeometry.dispose();
+      tableGeometry.dispose();
+      pavilionGeometry.dispose();
+      girdleGeometry.dispose();
       material.dispose();
       shards.forEach((shard) => {
         shard.geometry.dispose();
