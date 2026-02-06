@@ -49,7 +49,7 @@ function AboutPage() {
       },
       {
         id: 'philosophy',
-        title: 'My Story',
+        title: 'My Philosophy',
         content: '자연만이 주는 아름다움을, 인간만이 주는 따스함을 잊지 않는다.',
         showInHome: true,
       },
@@ -109,6 +109,7 @@ function AboutPage() {
   // 탭에 표시할 섹션 그룹화
   const tabSections = [
     { label: 'My Story', sections: aboutMeData.sections.filter((s) => s.title === 'My Story') },
+    { label: 'My Philosophy', sections: aboutMeData.sections.filter((s) => s.title === 'My Philosophy') },
     { label: 'My Favorite', sections: aboutMeData.sections.filter((s) => s.title === 'My Favorite') },
   ];
 
