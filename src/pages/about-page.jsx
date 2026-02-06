@@ -144,7 +144,7 @@ function AboutPage() {
             textAlign: 'center',
           }}
         >
-          About Me
+          자기소개
         </Typography>
 
         {/* 기본 정보 카드 */}
@@ -253,18 +253,6 @@ function AboutPage() {
                   borderColor: 'divider',
                 }}
               >
-                {section.showInHome && (
-                  <Chip
-                    label="홈에 표시"
-                    size="small"
-                    sx={{
-                      mb: 2,
-                      backgroundColor: 'rgba(196, 181, 253, 0.2)',
-                      color: 'primary.main',
-                      fontSize: '0.7rem',
-                    }}
-                  />
-                )}
                 <Typography
                   variant="body1"
                   sx={{
