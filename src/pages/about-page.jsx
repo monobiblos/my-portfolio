@@ -278,10 +278,10 @@ function AboutPage() {
         >
           <CardContent>
             <Typography
-              variant="body2"
-              sx={{ color: 'text.secondary', mb: 2 }}
+              variant="h6"
+              sx={{ color: 'text.primary', mb: 3, fontWeight: 600 }}
             >
-              이 페이지가 마음에 드셨나요?
+              응원하기
             </Typography>
 
             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 2 }}>
