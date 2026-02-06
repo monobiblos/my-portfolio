@@ -51,6 +51,7 @@ function ProjectsSection() {
   return (
     <Box
       component="section"
+      id="projects"
       sx={{
         py: { xs: 8, md: 12 },
         backgroundColor: 'background.paper',
