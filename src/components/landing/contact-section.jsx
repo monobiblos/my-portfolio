@@ -175,7 +175,7 @@ function ContactSection() {
                 '&:hover': {
                   color: 'primary.main',
                   borderColor: 'primary.main',
-                  backgroundColor: 'rgba(139, 92, 246, 0.08)',
+                  backgroundColor: 'rgba(196, 181, 253, 0.1)',
                 },
               }}
             >

@@ -30,7 +30,7 @@ function HeroSection() {
             textAlign: 'center',
             py: { xs: 6, md: 10 },
             px: { xs: 3, md: 6 },
-            background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.06) 0%, rgba(167, 139, 250, 0.04) 100%)',
+            background: 'linear-gradient(135deg, rgba(196, 181, 253, 0.1) 0%, rgba(167, 139, 250, 0.05) 100%)',
           }}
         >
           <CardContent>

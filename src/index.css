@@ -6,12 +6,11 @@
   box-sizing: border-box;
 }
 
-/* 화이트모드 CSS 변수 */
+/* 다크모드 CSS 변수 */
 :root {
   /* 기본 컬러 */
   --color-black: #000000;
   --color-white: #FFFFFF;
-  --color-gray-50: #FAFAFA;
   --color-gray-100: #F4F4F5;
   --color-gray-200: #E4E4E7;
   --color-gray-300: #D4D4D8;
@@ -22,7 +21,7 @@
   --color-gray-800: #27272A;
   --color-gray-900: #18181B;
 
-  /* 강조 컬러 - 보라색 */
+  /* 강조 컬러 - 연보라 */
   --color-accent-50: #F5F3FF;
   --color-accent-100: #EDE9FE;
   --color-accent-200: #DDD6FE;
@@ -33,13 +32,13 @@
   --color-accent-700: #6D28D9;
 
   /* 배경 */
-  --bg-primary: #EDEDED;
-  --bg-secondary: #E5E5E5;
-  --bg-card: #FFFFFF;
+  --bg-primary: var(--color-black);
+  --bg-secondary: #0A0A0A;
+  --bg-card: #0F0F0F;
 
   /* 텍스트 */
-  --text-primary: #1A1A2E;
-  --text-secondary: #64748B;
+  --text-primary: var(--color-white);
+  --text-secondary: var(--color-gray-400);
 
   /* 폰트 - Pretendard 자간 -1% */
   font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
@@ -47,7 +46,7 @@
   font-weight: 400;
   letter-spacing: -0.01em;
 
-  color-scheme: light;
+  color-scheme: dark;
   color: var(--text-primary);
   background-color: var(--bg-primary);
 
@@ -73,35 +72,16 @@ html, body {
   flex-direction: column;
 }
 
-/* 기계적 배경 패턴 */
-body {
-  background-color: var(--bg-primary);
-  background-image:
-    /* 그리드 라인 */
-    linear-gradient(rgba(139, 92, 246, 0.04) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(139, 92, 246, 0.04) 1px, transparent 1px),
-    /* 점 패턴 */
-    radial-gradient(circle, rgba(139, 92, 246, 0.06) 1px, transparent 1px);
-  background-size:
-    40px 40px,
-    40px 40px,
-    20px 20px;
-  background-position:
-    -1px -1px,
-    -1px -1px,
-    0 0;
-}
-
 /* 링크 스타일 */
 a {
   font-weight: 500;
-  color: var(--color-accent-500);
+  color: var(--color-accent-300);
   text-decoration: none;
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: var(--color-accent-600);
+  color: var(--color-accent-400);
 }
 
 /* 섹션 구분선 */
@@ -122,20 +102,20 @@ a:hover {
 }
 
 ::-webkit-scrollbar-track {
-  background: var(--bg-secondary);
+  background: var(--bg-primary);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: var(--color-accent-300);
+  background: var(--color-gray-700);
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-accent-500);
+  background: var(--color-accent-400);
 }
 
 /* 선택 영역 스타일 */
 ::selection {
   background: var(--color-accent-400);
-  color: var(--color-white);
+  color: var(--color-black);
 }
