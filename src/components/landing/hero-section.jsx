@@ -306,6 +306,75 @@ function HeroSection() {
     edgeLines.rotation.z = 0.05;
     scene.add(edgeLines);
 
+    // 설계도 스타일 검은색 엣지 라인 (살짝 회전)
+    const blueprintEdgesMaterial = new THREE.LineBasicMaterial({
+      color: 0x000000,
+      transparent: true,
+      opacity: 0.3,
+      linewidth: 1,
+    });
+    const blueprintEdgeLines = new THREE.LineSegments(edgesGeometry, blueprintEdgesMaterial);
+    blueprintEdgeLines.scale.set(1.35, 1.35, 1.35); // 약간 더 크게
+    blueprintEdgeLines.position.y = 1.0;
+    blueprintEdgeLines.rotation.x = 0.15 + 0.08; // 살짝 다르게 회전
+    blueprintEdgeLines.rotation.y = 0.12; // Y축으로 살짝 회전
+    blueprintEdgeLines.rotation.z = 0.05 - 0.06;
+    scene.add(blueprintEdgeLines);
+
+    // 파빌리온(하단 기둥) 금색 라인
+    const createPavilionLines = () => {
+      const points = [];
+      const numSides = 8;
+      const girdleRadius = 1.0;
+      const pavilionDepth = 0.85;
+      const girdleLevel = 0;
+      const culetPoint = -pavilionDepth;
+
+      // 거들에서 큘렛까지의 주요 라인들
+      for (let i = 0; i < numSides; i++) {
+        const angle = i * (Math.PI * 2) / numSides;
+        // 거들 포인트
+        const girdleX = Math.cos(angle) * girdleRadius;
+        const girdleZ = Math.sin(angle) * girdleRadius;
+        // 큘렛으로 연결
+        points.push(new THREE.Vector3(girdleX, girdleLevel, girdleZ));
+        points.push(new THREE.Vector3(0, culetPoint, 0));
+      }
+
+      // 거들 링 (하단 테두리)
+      for (let i = 0; i < numSides * 2; i++) {
+        const angle1 = i * (Math.PI * 2) / (numSides * 2);
+        const angle2 = (i + 1) * (Math.PI * 2) / (numSides * 2);
+        points.push(new THREE.Vector3(
+          Math.cos(angle1) * girdleRadius,
+          girdleLevel,
+          Math.sin(angle1) * girdleRadius
+        ));
+        points.push(new THREE.Vector3(
+          Math.cos(angle2) * girdleRadius,
+          girdleLevel,
+          Math.sin(angle2) * girdleRadius
+        ));
+      }
+
+      const geometry = new THREE.BufferGeometry().setFromPoints(points);
+      return geometry;
+    };
+
+    const pavilionLinesGeometry = createPavilionLines();
+    const pavilionLinesMaterial = new THREE.LineBasicMaterial({
+      color: 0xa78bfa, // 보라색 (primary color)
+      transparent: true,
+      opacity: 0.6,
+      linewidth: 1,
+    });
+    const pavilionLines = new THREE.LineSegments(pavilionLinesGeometry, pavilionLinesMaterial);
+    pavilionLines.scale.set(1.32, 1.32, 1.32);
+    pavilionLines.position.y = 1.0;
+    pavilionLines.rotation.x = 0.15;
+    pavilionLines.rotation.z = 0.05;
+    scene.add(pavilionLines);
+
     // 내부 반사용 작은 다이아몬드 (투명하게)
     const innerMaterial = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
@@ -378,6 +447,8 @@ function HeroSection() {
       diamond.rotation.y += 0.003;
       innerDiamond.rotation.y += 0.003;
       edgeLines.rotation.y += 0.003;
+      blueprintEdgeLines.rotation.y -= 0.002; // 반대 방향으로 천천히 회전
+      pavilionLines.rotation.y += 0.003; // 다이아몬드와 함께 회전
 
       // 조명 움직임 (반짝임 효과)
       light3.position.x = Math.sin(time * 2) * 2;
@@ -419,6 +490,9 @@ function HeroSection() {
       diamondMaterial.dispose();
       edgesGeometry.dispose();
       edgesMaterial.dispose();
+      blueprintEdgesMaterial.dispose();
+      pavilionLinesGeometry.dispose();
+      pavilionLinesMaterial.dispose();
       innerMaterial.dispose();
       // 원형 파티클 정리
       circleGroup.children.forEach((circle) => {
