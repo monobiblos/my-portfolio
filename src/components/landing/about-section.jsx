@@ -40,10 +40,45 @@ const AboutSection = memo(function AboutSection() {
         backgroundColor: 'background.paper',
       }}
     >
-      <Container maxWidth="md">
+      <Container maxWidth="md" sx={{ position: 'relative' }}>
+        {/* 배경 꽃 일러스트 */}
+        <Box
+          component="svg"
+          viewBox="0 0 400 300"
+          sx={{
+            position: 'absolute',
+            bottom: { xs: -40, md: -60 },
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: { xs: 280, md: 400 },
+            height: { xs: 210, md: 300 },
+            opacity: 0.15,
+            pointerEvents: 'none',
+            zIndex: 0,
+          }}
+        >
+          {/* 꽃잎들 */}
+          <ellipse cx="200" cy="120" rx="45" ry="70" fill="none" stroke="#a78bfa" strokeWidth="1.5" transform="rotate(0 200 120)" />
+          <ellipse cx="200" cy="120" rx="45" ry="70" fill="none" stroke="#a78bfa" strokeWidth="1.5" transform="rotate(60 200 120)" />
+          <ellipse cx="200" cy="120" rx="45" ry="70" fill="none" stroke="#a78bfa" strokeWidth="1.5" transform="rotate(120 200 120)" />
+          <ellipse cx="200" cy="120" rx="45" ry="70" fill="none" stroke="#a78bfa" strokeWidth="1.5" transform="rotate(180 200 120)" />
+          <ellipse cx="200" cy="120" rx="45" ry="70" fill="none" stroke="#a78bfa" strokeWidth="1.5" transform="rotate(240 200 120)" />
+          <ellipse cx="200" cy="120" rx="45" ry="70" fill="none" stroke="#a78bfa" strokeWidth="1.5" transform="rotate(300 200 120)" />
+          {/* 꽃 중심 */}
+          <circle cx="200" cy="120" r="25" fill="none" stroke="#c4b5fd" strokeWidth="2" />
+          <circle cx="200" cy="120" r="12" fill="none" stroke="#a78bfa" strokeWidth="1.5" />
+          {/* 줄기 */}
+          <path d="M200 170 Q200 220, 200 280" fill="none" stroke="#a78bfa" strokeWidth="1.5" />
+          {/* 잎사귀 */}
+          <path d="M200 210 Q160 200, 150 230 Q170 220, 200 220" fill="none" stroke="#a78bfa" strokeWidth="1.5" />
+          <path d="M200 240 Q240 230, 250 260 Q230 250, 200 250" fill="none" stroke="#a78bfa" strokeWidth="1.5" />
+        </Box>
+
         <Fade in timeout={800}>
           <Card
             sx={{
+              position: 'relative',
+              zIndex: 1,
               textAlign: 'center',
               py: { xs: 5, md: 8 },
               px: { xs: 3, md: 6 },
@@ -83,7 +118,7 @@ const AboutSection = memo(function AboutSection() {
                   color: 'text.primary',
                 }}
               >
-                {aboutMeData.basicInfo.name}
+                나에 대하여
               </Typography>
               {storySection && (
                 <Typography
@@ -103,7 +138,7 @@ const AboutSection = memo(function AboutSection() {
                 <Typography
                   variant="body1"
                   sx={{
-                    color: 'text.secondary',
+                    color: 'primary.main',
                     maxWidth: 500,
                     mx: 'auto',
                     mb: 4,
@@ -115,16 +150,41 @@ const AboutSection = memo(function AboutSection() {
                 </Typography>
               )}
               <Button
-                variant="outlined"
+                variant="contained"
                 component={Link}
                 to="/about"
                 aria-label="자기소개 페이지로 이동"
                 sx={{
                   px: 4,
-                  py: 1,
-                  transition: 'all 0.3s ease',
+                  py: 1.5,
+                  position: 'relative',
+                  overflow: 'hidden',
+                  backgroundColor: '#ffffff',
+                  color: '#000000',
+                  border: '2px solid',
+                  borderColor: '#000000',
+                  fontWeight: 600,
+                  transition: 'all 0.4s ease',
+                  zIndex: 1,
+                  '&::before': {
+                    content: '""',
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'primary.main',
+                    transform: 'scaleX(0)',
+                    transformOrigin: 'left',
+                    transition: 'transform 0.4s ease',
+                    zIndex: -1,
+                  },
                   '&:hover': {
-                    transform: 'scale(1.05)',
+                    color: '#ffffff',
+                    backgroundColor: 'transparent',
+                    '&::before': {
+                      transform: 'scaleX(1)',
+                    },
                   },
                   '&:focus': {
                     outline: '2px solid',

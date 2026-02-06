@@ -363,7 +363,7 @@ function HeroSection() {
 
     const pavilionLinesGeometry = createPavilionLines();
     const pavilionLinesMaterial = new THREE.LineBasicMaterial({
-      color: 0xa78bfa, // 보라색 (primary color)
+      color: 0xffffff, // 하얀색
       transparent: true,
       opacity: 0.6,
       linewidth: 1,
