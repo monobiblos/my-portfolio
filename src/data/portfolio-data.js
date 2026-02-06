@@ -34,10 +34,28 @@ export const aboutMeData = {
   ],
 };
 
-// 스킬 데이터
+// 스킬 데이터 (level 순서대로 정렬)
 export const skillsData = [
   {
     id: 1,
+    icon: 'figma',
+    name: 'Figma',
+    level: 90,
+    category: 'Design',
+    description: 'UI/UX 디자인, 프로토타이핑, 디자인 시스템',
+    showInHome: true,
+  },
+  {
+    id: 2,
+    icon: 'photoshop',
+    name: 'Photoshop',
+    level: 90,
+    category: 'Design',
+    description: '이미지 편집, 합성, 그래픽 디자인',
+    showInHome: true,
+  },
+  {
+    id: 3,
     icon: 'html',
     name: 'HTML',
     level: 80,
@@ -46,7 +64,16 @@ export const skillsData = [
     showInHome: true,
   },
   {
-    id: 2,
+    id: 4,
+    icon: 'illustration',
+    name: 'Illustration',
+    level: 80,
+    category: 'Design',
+    description: '일러스트레이션, 벡터 그래픽, 아이콘 디자인',
+    showInHome: true,
+  },
+  {
+    id: 5,
     icon: 'css',
     name: 'CSS',
     level: 75,
@@ -55,7 +82,7 @@ export const skillsData = [
     showInHome: true,
   },
   {
-    id: 3,
+    id: 6,
     icon: 'javascript',
     name: 'JavaScript',
     level: 60,
@@ -64,7 +91,7 @@ export const skillsData = [
     showInHome: true,
   },
   {
-    id: 4,
+    id: 7,
     icon: 'react',
     name: 'React',
     level: 60,
@@ -73,12 +100,12 @@ export const skillsData = [
     showInHome: true,
   },
   {
-    id: 5,
-    icon: 'figma',
-    name: 'Figma',
-    level: 90,
-    category: 'Design',
-    description: 'UI/UX 디자인, 프로토타이핑, 디자인 시스템',
+    id: 8,
+    icon: 'excel',
+    name: 'Excel',
+    level: 60,
+    category: 'etc',
+    description: '데이터 분석, 함수 활용, 문서 작성',
     showInHome: true,
   },
 ];
@@ -90,6 +117,7 @@ export const categoryColors = {
   Design: { main: '#EC4899', bg: 'rgba(236, 72, 153, 0.15)' },
   Backend: { main: '#10B981', bg: 'rgba(16, 185, 129, 0.15)' },
   Tools: { main: '#8B5CF6', bg: 'rgba(139, 92, 246, 0.15)' },
+  etc: { main: '#6B7280', bg: 'rgba(107, 114, 128, 0.15)' },
 };
 
 // 홈에 표시할 섹션 필터링

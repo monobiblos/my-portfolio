@@ -15,6 +15,9 @@ import CssIcon from '@mui/icons-material/Css';
 import JavascriptIcon from '@mui/icons-material/Javascript';
 import BrushIcon from '@mui/icons-material/Brush';
 import CodeIcon from '@mui/icons-material/Code';
+import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
+import DrawIcon from '@mui/icons-material/Draw';
+import TableChartIcon from '@mui/icons-material/TableChart';
 import { skillsData, categoryColors, getHomeSkills, getCategories } from '../../data/portfolio-data';
 
 /**
@@ -173,6 +176,9 @@ const SkillTreeSection = memo(function SkillTreeSection() {
       javascript: <JavascriptIcon />,
       react: <CodeIcon />,
       figma: <BrushIcon />,
+      photoshop: <PhotoCameraIcon />,
+      illustration: <DrawIcon />,
+      excel: <TableChartIcon />,
     };
     return icons[iconName] || <CodeIcon />;
   }, []);
