@@ -61,17 +61,21 @@ function HeroSection() {
     purpleLight.position.set(3, -3, 3);
     scene.add(purpleLight);
 
-    // Crystal Material
+    // Crystal Material - 깨진 유리 효과
     const material = new THREE.MeshPhysicalMaterial({
       color: 0xffffff,
-      metalness: 0.1,
-      roughness: 0.05,
-      transmission: 0.9,
-      thickness: 1.5,
-      envMapIntensity: 1,
+      metalness: 0.0,
+      roughness: 0.0,
+      transmission: 0.98,
+      transparent: true,
+      opacity: 0.4,
+      thickness: 0.5,
+      envMapIntensity: 1.5,
       clearcoat: 1,
-      clearcoatRoughness: 0.1,
-      ior: 2.4,
+      clearcoatRoughness: 0.0,
+      ior: 1.5,
+      reflectivity: 0.9,
+      side: THREE.DoubleSide,
     });
 
     // Main Crystal (박살난 효과 - Icosahedron)
@@ -79,17 +83,20 @@ function HeroSection() {
     const crystal = new THREE.Mesh(crystalGeometry, material);
     scene.add(crystal);
 
-    // Shattered pieces (여러 조각으로 박살)
+    // Shattered pieces (여러 조각으로 박살) - 깨진 유리 파편
     const shards = [];
     for (let i = 0; i < 8; i++) {
       const shardMaterial = new THREE.MeshPhysicalMaterial({
         color: i % 2 === 0 ? 0xc4b5fd : 0xffffff,
-        metalness: 0.1,
-        roughness: 0.05,
-        transmission: 0.85,
-        thickness: 0.8,
+        metalness: 0.0,
+        roughness: 0.0,
+        transmission: 0.95,
+        transparent: true,
+        opacity: 0.3 + Math.random() * 0.2,
+        thickness: 0.3,
         clearcoat: 1,
-        ior: 2.2,
+        ior: 1.5,
+        side: THREE.DoubleSide,
       });
 
       const shard = new THREE.Mesh(
