@@ -4,6 +4,7 @@ import Header from './components/common/header';
 import HomePage from './pages/home-page';
 import AboutPage from './pages/about-page';
 import ProjectsPage from './pages/projects-page';
+import AdminPage from './pages/admin-page';
 
 /**
  * App 컴포넌트 - 메인 애플리케이션 라우터
@@ -29,6 +30,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/admin" element={<AdminPage />} />
           </Routes>
         </Box>
       </Box>
