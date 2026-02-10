@@ -1,6 +1,3 @@
-/* Pretendard 폰트 CDN */
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
-
 /* CSS 초기화 */
 * {
   box-sizing: border-box;

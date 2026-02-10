@@ -18,7 +18,7 @@ import CodeIcon from '@mui/icons-material/Code';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DrawIcon from '@mui/icons-material/Draw';
 import TableChartIcon from '@mui/icons-material/TableChart';
-import { skillsData, categoryColors, getHomeSkills, getCategories } from '../../data/portfolio-data';
+import { categoryColors, getHomeSkills, getCategories } from '../../data/portfolio-data';
 
 /**
  * SkillCard 컴포넌트 - 개별 스킬 카드 (메모이제이션)

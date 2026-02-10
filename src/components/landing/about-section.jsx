@@ -161,8 +161,7 @@ const AboutSection = memo(function AboutSection() {
                   overflow: 'hidden',
                   backgroundColor: '#ffffff',
                   color: '#000000',
-                  border: '2px solid',
-                  borderColor: '#000000',
+                  border: 'none',
                   fontWeight: 600,
                   transition: 'all 0.4s ease',
                   zIndex: 1,
@@ -187,9 +186,7 @@ const AboutSection = memo(function AboutSection() {
                     },
                   },
                   '&:focus': {
-                    outline: '2px solid',
-                    outlineColor: 'primary.main',
-                    outlineOffset: '2px',
+                    outline: 'none',
                   },
                 }}
               >
