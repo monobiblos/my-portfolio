@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Header from './components/common/header';
 import HomePage from './pages/home-page';
 import AboutPage from './pages/about-page';
+import DesignsPage from './pages/designs-page';
 import ProjectsPage from './pages/projects-page';
 import AdminPage from './pages/admin-page';
 
@@ -29,6 +30,7 @@ function App() {
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/about" element={<AboutPage />} />
+            <Route path="/designs" element={<DesignsPage />} />
             <Route path="/projects" element={<ProjectsPage />} />
             <Route path="/admin" element={<AdminPage />} />
           </Routes>

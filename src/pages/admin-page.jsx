@@ -10,6 +10,7 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import LockIcon from '@mui/icons-material/Lock';
 import ProjectManager from '../components/admin/project-manager';
+import DesignManager from '../components/admin/design-manager';
 import GuestbookManager from '../components/admin/guestbook-manager';
 
 const ADMIN_PASSWORD_HASH = '372698ec836c29a92e938223c5fb64c26be26cc4fc8e2041b501fdd5b390ebf3';
@@ -122,12 +123,14 @@ function AdminPage() {
             }}
           >
             <Tab label="프로젝트 관리" />
+            <Tab label="디자인 관리" />
             <Tab label="방명록 관리" />
           </Tabs>
         </Card>
 
         {activeTab === 0 && <ProjectManager />}
-        {activeTab === 1 && <GuestbookManager />}
+        {activeTab === 1 && <DesignManager />}
+        {activeTab === 2 && <GuestbookManager />}
       </Container>
     </Box>
   );
