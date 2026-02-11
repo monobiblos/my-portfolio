@@ -12,7 +12,7 @@ import LockIcon from '@mui/icons-material/Lock';
 import ProjectManager from '../components/admin/project-manager';
 import GuestbookManager from '../components/admin/guestbook-manager';
 
-const ADMIN_PASSWORD_HASH = '2746790b33c996e2f77552cc80b3455a684b0532513900be5e6466dbb2e413f4';
+const ADMIN_PASSWORD_HASH = '372698ec836c29a92e938223c5fb64c26be26cc4fc8e2041b501fdd5b390ebf3';
 
 async function hashPassword(password) {
   const encoder = new TextEncoder();
@@ -33,12 +33,16 @@ function AdminPage() {
   const handleLogin = useCallback(async (e) => {
     e.preventDefault();
     setError('');
-    const hash = await hashPassword(password);
-    if (hash === ADMIN_PASSWORD_HASH) {
-      sessionStorage.setItem('admin_auth', 'true');
-      setIsAuthenticated(true);
-    } else {
-      setError('비밀번호가 올바르지 않습니다.');
+    try {
+      const hash = await hashPassword(password);
+      if (hash === ADMIN_PASSWORD_HASH) {
+        sessionStorage.setItem('admin_auth', 'true');
+        setIsAuthenticated(true);
+      } else {
+        setError('비밀번호가 올바르지 않습니다.');
+      }
+    } catch {
+      setError('보안 연결(HTTPS)이 필요합니다. HTTPS로 접속해주세요.');
     }
   }, [password]);
 
