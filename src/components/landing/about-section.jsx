@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useState, useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -7,7 +7,8 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Fade from '@mui/material/Fade';
 import { Link } from 'react-router-dom';
-import { aboutMeData, getHomeSections } from '../../data/portfolio-data';
+import { getHomeSections } from '../../data/portfolio-data';
+import { supabase } from '../../utils/supabase';
 
 /**
  * AboutSection 컴포넌트 - 간단한 자기소개 섹션
@@ -18,17 +19,30 @@ import { aboutMeData, getHomeSections } from '../../data/portfolio-data';
  * <AboutSection />
  */
 const AboutSection = memo(function AboutSection() {
-  // useMemo로 홈에 표시할 섹션 캐싱
-  const homeSections = useMemo(() => getHomeSections(), []);
+  const [sections, setSections] = useState(null);
 
-  // 첫 번째 섹션 (My Story)과 두 번째 섹션 (My Philosophy) 가져오기
+  useEffect(() => {
+    supabase
+      .from('about_sections')
+      .select('*')
+      .eq('show_in_home', true)
+      .order('sort_order', { ascending: true })
+      .then(({ data, error }) => {
+        if (!error && data?.length > 0) setSections(data);
+        else setSections(getHomeSections());
+      })
+      .catch(() => setSections(getHomeSections()));
+  }, []);
+
+  const displaySections = useMemo(() => sections || getHomeSections(), [sections]);
+
   const storySection = useMemo(() =>
-    homeSections.find((s) => s.title === 'My Story'),
-    [homeSections]
+    displaySections.find((s) => s.title === 'My Story'),
+    [displaySections]
   );
   const philosophySection = useMemo(() =>
-    homeSections.find((s) => s.title === 'My Philosophy'),
-    [homeSections]
+    displaySections.find((s) => s.title === 'My Philosophy'),
+    [displaySections]
   );
 
   return (

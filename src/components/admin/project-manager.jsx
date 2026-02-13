@@ -21,6 +21,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { supabase } from '../../utils/supabase';
+import ImageUpload from './image-upload';
 
 const emptyProject = {
   title: '',
@@ -251,7 +252,7 @@ function ProjectManager() {
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
           <TextField fullWidth required name="title" label="프로젝트 제목" value={formData.title} onChange={handleInputChange} />
           <TextField fullWidth name="description" label="설명" multiline rows={3} value={formData.description} onChange={handleInputChange} />
-          <TextField fullWidth name="thumbnail_url" label="썸네일 URL" value={formData.thumbnail_url} onChange={handleInputChange} />
+          <ImageUpload value={formData.thumbnail_url} onChange={(url) => setFormData((prev) => ({ ...prev, thumbnail_url: url || '' }))} folder="projects" label="썸네일" />
           <TextField fullWidth name="detail_url" label="프로젝트 URL" value={formData.detail_url} onChange={handleInputChange} />
           <TextField fullWidth name="tech_stack" label="기술 스택 (쉼표로 구분)" placeholder="React, Vite, MUI" value={formData.tech_stack} onChange={handleInputChange} />
           <TextField fullWidth name="sort_order" label="정렬 순서" type="number" value={formData.sort_order} onChange={handleInputChange} />

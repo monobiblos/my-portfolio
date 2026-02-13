@@ -20,6 +20,7 @@ import AddIcon from '@mui/icons-material/Add';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { supabase } from '../../utils/supabase';
+import ImageUpload from './image-upload';
 
 const emptyDesign = {
   title: '',
@@ -237,7 +238,7 @@ function DesignManager() {
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
           <TextField fullWidth required name="title" label="디자인 제목" value={formData.title} onChange={handleInputChange} />
           <TextField fullWidth name="description" label="설명" multiline rows={3} value={formData.description} onChange={handleInputChange} />
-          <TextField fullWidth name="image_url" label="이미지 URL" value={formData.image_url} onChange={handleInputChange} />
+          <ImageUpload value={formData.image_url} onChange={(url) => setFormData((prev) => ({ ...prev, image_url: url || '' }))} folder="designs" label="디자인 이미지" />
           <TextField fullWidth name="sort_order" label="정렬 순서" type="number" value={formData.sort_order} onChange={handleInputChange} />
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <Switch checked={formData.is_published} onChange={(e) => setFormData((prev) => ({ ...prev, is_published: e.target.checked }))} />

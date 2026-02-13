@@ -513,13 +513,33 @@ function AboutPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState(null);
+  const [basicInfo, setBasicInfo] = useState(aboutMeData.basicInfo);
+  const [aboutSections, setAboutSections] = useState(aboutMeData.sections);
 
-  // useMemo로 탭 섹션 캐싱
-  const tabSections = useMemo(() => [
-    { label: 'My Story', sections: aboutMeData.sections.filter((s) => s.title === 'My Story') },
-    { label: 'My Philosophy', sections: aboutMeData.sections.filter((s) => s.title === 'My Philosophy') },
-    { label: 'My Favorite', sections: aboutMeData.sections.filter((s) => s.title === 'My Favorite') },
-  ], []);
+  // Supabase에서 소개 데이터 fetch
+  useEffect(() => {
+    Promise.all([
+      supabase.from('about_basic_info').select('*').eq('id', 1).single(),
+      supabase.from('about_sections').select('*').order('sort_order', { ascending: true }),
+    ]).then(([basicResult, sectionsResult]) => {
+      if (!basicResult.error && basicResult.data) setBasicInfo(basicResult.data);
+      if (!sectionsResult.error && sectionsResult.data?.length > 0) setAboutSections(sectionsResult.data);
+    });
+  }, []);
+
+  // 동적 탭 섹션 구성
+  const tabSections = useMemo(() =>
+    aboutSections.map((section) => ({
+      label: section.title,
+      sections: [section],
+    })),
+    [aboutSections]
+  );
+
+  // activeTab 안전 처리
+  useEffect(() => {
+    if (activeTab >= tabSections.length && tabSections.length > 0) setActiveTab(0);
+  }, [activeTab, tabSections.length]);
 
   // 꽃다발 카운트 불러오기
   useEffect(() => {
@@ -624,7 +644,7 @@ function AboutPage() {
         </Typography>
 
         {/* 기본 정보 카드 */}
-        <BasicInfoCard basicInfo={aboutMeData.basicInfo} />
+        <BasicInfoCard basicInfo={basicInfo} />
 
         {/* 콘텐츠 섹션 탭 */}
         <Card sx={{ mb: 4 }}>
