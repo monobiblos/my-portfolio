@@ -22,6 +22,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import SaveIcon from '@mui/icons-material/Save';
 import { supabase } from '../../utils/supabase';
 import ImageUpload from './image-upload';
+import FileUpload from './file-upload';
 
 const emptyBasicInfo = {
   name: '',
@@ -29,6 +30,8 @@ const emptyBasicInfo = {
   major: '',
   experience: '',
   photo: '',
+  resume_url: '',
+  portfolio_url: '',
 };
 
 const emptySection = {
@@ -104,6 +107,8 @@ function AboutManager() {
           major: basicInfo.major.trim() || null,
           experience: basicInfo.experience.trim() || null,
           photo: basicInfo.photo.trim() || null,
+          resume_url: basicInfo.resume_url?.trim() || null,
+          portfolio_url: basicInfo.portfolio_url?.trim() || null,
         })
         .eq('id', 1);
       if (error) throw error;
@@ -260,6 +265,8 @@ function AboutManager() {
               <TextField fullWidth name="major" label="전공" value={basicInfo.major} onChange={handleBasicInfoChange} />
               <TextField fullWidth name="experience" label="경력" value={basicInfo.experience} onChange={handleBasicInfoChange} />
               <ImageUpload value={basicInfo.photo} onChange={(url) => setBasicInfo((prev) => ({ ...prev, photo: url || '' }))} folder="about" label="프로필 사진" />
+              <FileUpload value={basicInfo.resume_url} onChange={(url) => setBasicInfo((prev) => ({ ...prev, resume_url: url || '' }))} folder="documents" label="이력서 파일" />
+              <FileUpload value={basicInfo.portfolio_url} onChange={(url) => setBasicInfo((prev) => ({ ...prev, portfolio_url: url || '' }))} folder="documents" label="포트폴리오 파일" />
               <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
                 <Button variant="contained" startIcon={<SaveIcon />} onClick={handleBasicInfoSave} disabled={basicInfoSaving}>
                   {basicInfoSaving ? '저장 중...' : '저장'}

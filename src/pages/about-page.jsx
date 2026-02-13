@@ -27,6 +27,8 @@ import CodeIcon from '@mui/icons-material/Code';
 import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DrawIcon from '@mui/icons-material/Draw';
 import TableChartIcon from '@mui/icons-material/TableChart';
+import DescriptionIcon from '@mui/icons-material/Description';
+import FolderIcon from '@mui/icons-material/Folder';
 import { supabase } from '../utils/supabase';
 import { aboutMeData, skillsData, categoryColors } from '../data/portfolio-data';
 
@@ -708,6 +710,27 @@ function AboutPage() {
             ))}
           </CardContent>
         </Card>
+
+        {/* 다운로드 버튼 */}
+        {(basicInfo.resume_url || basicInfo.portfolio_url) && (
+          <Card sx={{ mb: 4, p: { xs: 2, md: 3 }, textAlign: 'center' }}>
+            <Typography variant="h6" sx={{ mb: 2, fontWeight: 600 }}>
+              다운로드
+            </Typography>
+            <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
+              {basicInfo.resume_url && (
+                <Button variant="contained" href={basicInfo.resume_url} target="_blank" rel="noopener noreferrer" startIcon={<DescriptionIcon />}>
+                  이력서 다운받기
+                </Button>
+              )}
+              {basicInfo.portfolio_url && (
+                <Button variant="outlined" href={basicInfo.portfolio_url} target="_blank" rel="noopener noreferrer" startIcon={<FolderIcon />}>
+                  예전 포트폴리오 보기
+                </Button>
+              )}
+            </Box>
+          </Card>
+        )}
 
         {/* 스킬 섹션 */}
         <SkillsSection />
