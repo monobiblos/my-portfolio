@@ -76,6 +76,7 @@ const BasicInfoCard = memo(function BasicInfoCard({ basicInfo }) {
             <Box sx={{ display: 'flex', justifyContent: 'center' }}>
               <Avatar
                 alt={basicInfo.name}
+                src={basicInfo.photo || undefined}
                 sx={{
                   width: { xs: 120, md: 160 },
                   height: { xs: 120, md: 160 },
