@@ -27,7 +27,7 @@ import FileUpload from './file-upload';
 const emptyBasicInfo = {
   name: '',
   education: '',
-  major: '',
+  job: '',
   experience: '',
   photo: '',
   resume_url: '',
@@ -74,7 +74,7 @@ function AboutManager() {
         setBasicInfo({
           name: data.name || '',
           education: data.education || '',
-          major: data.major || '',
+          job: data.job || '',
           experience: data.experience || '',
           photo: data.photo || '',
           resume_url: data.resume_url || '',
@@ -106,7 +106,7 @@ function AboutManager() {
         .update({
           name: basicInfo.name.trim(),
           education: basicInfo.education.trim() || null,
-          major: basicInfo.major.trim() || null,
+          job: basicInfo.job.trim() || null,
           experience: basicInfo.experience.trim() || null,
           photo: basicInfo.photo.trim() || null,
           resume_url: basicInfo.resume_url?.trim() || null,
@@ -263,8 +263,8 @@ function AboutManager() {
           <Card>
             <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, p: 3 }}>
               <TextField fullWidth required name="name" label="이름" value={basicInfo.name} onChange={handleBasicInfoChange} />
-              <TextField fullWidth name="education" label="학력" value={basicInfo.education} onChange={handleBasicInfoChange} />
-              <TextField fullWidth name="major" label="전공" value={basicInfo.major} onChange={handleBasicInfoChange} />
+              <TextField fullWidth name="education" label="학력" placeholder="상일미디어고등학교 디지털만화영상과" value={basicInfo.education} onChange={handleBasicInfoChange} />
+              <TextField fullWidth name="job" label="직업" placeholder="웹 디자이너" value={basicInfo.job} onChange={handleBasicInfoChange} />
               <TextField fullWidth name="experience" label="경력" value={basicInfo.experience} onChange={handleBasicInfoChange} />
               <ImageUpload value={basicInfo.photo} onChange={(url) => setBasicInfo((prev) => ({ ...prev, photo: url || '' }))} folder="about" label="프로필 사진" />
               <FileUpload value={basicInfo.resume_url} onChange={(url) => setBasicInfo((prev) => ({ ...prev, resume_url: url || '' }))} folder="documents" label="이력서 파일" />

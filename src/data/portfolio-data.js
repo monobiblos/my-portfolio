@@ -7,8 +7,8 @@
 export const aboutMeData = {
   basicInfo: {
     name: '황지선',
-    education: '상일미디어고등학교 졸업',
-    major: '디지털만화영상과 출신',
+    education: '상일미디어고등학교 디지털만화영상과',
+    job: '웹 디자이너',
     experience: '2015년부터 활동, 웹디자이너로서 5년 6개월',
     photo: '',
   },

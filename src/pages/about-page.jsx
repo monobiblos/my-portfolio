@@ -120,12 +120,14 @@ const BasicInfoCard = memo(function BasicInfoCard({ basicInfo }) {
                   {basicInfo.education}
                 </Typography>
               </Box>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                <BrushIcon sx={{ color: 'primary.main', fontSize: 20 }} aria-hidden="true" />
-                <Typography component="dd" variant="body1" sx={{ color: 'text.secondary', m: 0 }}>
-                  {basicInfo.major}
-                </Typography>
-              </Box>
+              {basicInfo.job && (
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <BrushIcon sx={{ color: 'primary.main', fontSize: 20 }} aria-hidden="true" />
+                  <Typography component="dd" variant="body1" sx={{ color: 'text.secondary', m: 0 }}>
+                    {basicInfo.job}
+                  </Typography>
+                </Box>
+              )}
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                 <WorkIcon sx={{ color: 'primary.main', fontSize: 20 }} aria-hidden="true" />
                 <Typography component="dd" variant="body1" sx={{ color: 'text.secondary', m: 0 }}>
