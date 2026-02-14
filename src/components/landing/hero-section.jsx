@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import * as THREE from 'three';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -19,6 +18,12 @@ function HeroSection() {
 
   useEffect(() => {
     if (!canvasRef.current) return;
+
+    let disposed = false;
+    let animationId = null;
+
+    import('three').then((THREE) => {
+      if (disposed || !canvasRef.current) return;
 
     // Scene
     const scene = new THREE.Scene();
@@ -440,7 +445,7 @@ function HeroSection() {
     // Animation
     let time = 0;
     function animate() {
-      requestAnimationFrame(animate);
+      animationId = requestAnimationFrame(animate);
       time += 0.008;
 
       // 다이아몬드 천천히 회전
@@ -488,24 +493,31 @@ function HeroSection() {
     window.addEventListener('resize', handleResize);
 
     // Cleanup
+    sceneRef.current = { renderer, handleResize, animationId: () => animationId, diamondGeometry, diamondMaterial, edgesGeometry, edgesMaterial, blueprintEdgesMaterial, pavilionLinesGeometry, pavilionLinesMaterial, innerMaterial, circleGroup, envGeometry, envMaterial };
+    }); // end of import('three').then()
+
     return () => {
-      window.removeEventListener('resize', handleResize);
-      renderer.dispose();
-      diamondGeometry.dispose();
-      diamondMaterial.dispose();
-      edgesGeometry.dispose();
-      edgesMaterial.dispose();
-      blueprintEdgesMaterial.dispose();
-      pavilionLinesGeometry.dispose();
-      pavilionLinesMaterial.dispose();
-      innerMaterial.dispose();
-      // 원형 파티클 정리
-      circleGroup.children.forEach((circle) => {
-        circle.geometry.dispose();
-        circle.material.dispose();
-      });
-      envGeometry.dispose();
-      envMaterial.dispose();
+      disposed = true;
+      const refs = sceneRef.current;
+      if (refs && refs.renderer) {
+        if (refs.animationId) cancelAnimationFrame(refs.animationId());
+        window.removeEventListener('resize', refs.handleResize);
+        refs.renderer.dispose();
+        refs.diamondGeometry.dispose();
+        refs.diamondMaterial.dispose();
+        refs.edgesGeometry.dispose();
+        refs.edgesMaterial.dispose();
+        refs.blueprintEdgesMaterial.dispose();
+        refs.pavilionLinesGeometry.dispose();
+        refs.pavilionLinesMaterial.dispose();
+        refs.innerMaterial.dispose();
+        refs.circleGroup.children.forEach((circle) => {
+          circle.geometry.dispose();
+          circle.material.dispose();
+        });
+        refs.envGeometry.dispose();
+        refs.envMaterial.dispose();
+      }
     };
   }, []);
 
