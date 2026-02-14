@@ -11,6 +11,7 @@ import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
 import Skeleton from '@mui/material/Skeleton';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
+import DescriptionIcon from '@mui/icons-material/Description';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../utils/supabase';
 
@@ -190,6 +191,19 @@ function ProjectsSection() {
                         />
                       ))}
                     </Box>
+                    {project.doc_url && (
+                      <Button
+                        variant="outlined"
+                        size="small"
+                        href={project.doc_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        startIcon={<DescriptionIcon />}
+                        sx={{ mt: 2 }}
+                      >
+                        프로젝트 설계서
+                      </Button>
+                    )}
                   </CardContent>
                 </Card>
               </Grid>

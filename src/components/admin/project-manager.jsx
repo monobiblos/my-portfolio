@@ -22,12 +22,14 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { supabase } from '../../utils/supabase';
 import ImageUpload from './image-upload';
+import FileUpload from './file-upload';
 
 const emptyProject = {
   title: '',
   description: '',
   thumbnail_url: '',
   detail_url: '',
+  doc_url: '',
   tech_stack: '',
   is_published: true,
   sort_order: 0,
@@ -83,6 +85,7 @@ function ProjectManager() {
       description: project.description || '',
       thumbnail_url: project.thumbnail_url || '',
       detail_url: project.detail_url || '',
+      doc_url: project.doc_url || '',
       tech_stack: Array.isArray(project.tech_stack) ? project.tech_stack.join(', ') : '',
       is_published: project.is_published ?? true,
       sort_order: project.sort_order ?? 0,
@@ -102,6 +105,7 @@ function ProjectManager() {
       description: formData.description.trim() || null,
       thumbnail_url: formData.thumbnail_url.trim() || null,
       detail_url: formData.detail_url.trim() || null,
+      doc_url: formData.doc_url.trim() || null,
       tech_stack: formData.tech_stack
         ? formData.tech_stack.split(',').map((s) => s.trim()).filter(Boolean)
         : [],
@@ -254,6 +258,11 @@ function ProjectManager() {
           <TextField fullWidth name="description" label="설명" multiline rows={3} value={formData.description} onChange={handleInputChange} />
           <ImageUpload value={formData.thumbnail_url} onChange={(url) => setFormData((prev) => ({ ...prev, thumbnail_url: url || '' }))} folder="projects" label="썸네일" />
           <TextField fullWidth name="detail_url" label="프로젝트 URL" value={formData.detail_url} onChange={handleInputChange} />
+          <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500, mt: 1 }}>
+            프로젝트 설계서 (링크 또는 파일 업로드)
+          </Typography>
+          <TextField fullWidth name="doc_url" label="설계서 URL (직접 입력)" placeholder="https://docs.google.com/..." value={formData.doc_url} onChange={handleInputChange} />
+          <FileUpload value={formData.doc_url} onChange={(url) => setFormData((prev) => ({ ...prev, doc_url: url || '' }))} folder="documents" label="또는 파일 업로드" />
           <TextField fullWidth name="tech_stack" label="기술 스택 (쉼표로 구분)" placeholder="React, Vite, MUI" value={formData.tech_stack} onChange={handleInputChange} />
           <TextField fullWidth name="sort_order" label="정렬 순서" type="number" value={formData.sort_order} onChange={handleInputChange} />
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
