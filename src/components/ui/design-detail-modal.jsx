@@ -4,6 +4,7 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import CloseIcon from '@mui/icons-material/Close';
+import ZoomOutMapIcon from '@mui/icons-material/ZoomOutMap';
 
 /**
  * DesignDetailModal 컴포넌트 - 디자인 상세 보기 모달
@@ -57,27 +58,51 @@ function DesignDetailModal({ isOpen, onClose, design = null }) {
             }}
           />
         )}
-        <Box sx={{ p: 3 }}>
-          <Typography
-            variant="h3"
-            sx={{
-              fontSize: { xs: '1.25rem', md: '1.5rem' },
-              mb: 1,
-              color: 'text.primary',
-            }}
-          >
-            {design?.title}
-          </Typography>
-          {design?.description && (
+        <Box sx={{ p: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 2 }}>
+          <Box sx={{ flex: 1, minWidth: 0 }}>
             <Typography
-              variant="body1"
+              variant="h3"
               sx={{
-                color: 'text.secondary',
-                lineHeight: 1.7,
+                fontSize: { xs: '1.25rem', md: '1.5rem' },
+                mb: 1,
+                color: 'text.primary',
               }}
             >
-              {design.description}
+              {design?.title}
             </Typography>
+            {design?.description && (
+              <Typography
+                variant="body1"
+                sx={{
+                  color: 'text.secondary',
+                  lineHeight: 1.7,
+                }}
+              >
+                {design.description}
+              </Typography>
+            )}
+          </Box>
+          {design?.image_url && (
+            <IconButton
+              component="a"
+              href={design.image_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="원본 이미지 보기"
+              sx={{
+                flexShrink: 0,
+                color: 'text.secondary',
+                border: '1px solid',
+                borderColor: 'divider',
+                '&:hover': {
+                  color: 'primary.main',
+                  borderColor: 'primary.main',
+                  backgroundColor: 'rgba(196, 181, 253, 0.1)',
+                },
+              }}
+            >
+              <ZoomOutMapIcon />
+            </IconButton>
           )}
         </Box>
       </DialogContent>
