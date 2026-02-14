@@ -403,200 +403,215 @@ function HeroSection() {
     innerDiamond.rotation.z = 0.05;
     scene.add(innerDiamond);
 
-    // === 대왕고래 뼈 (와이어프레임) ===
-    const createWhaleSkeletonLines = () => {
-      const pts = [];
-      const addLine = (a, b) => { pts.push(a.clone(), b.clone()); };
-      const addCurve = (arr) => {
-        for (let i = 0; i < arr.length - 1; i++) pts.push(arr[i].clone(), arr[i + 1].clone());
+    // === 대왕고래 뼈 (3D 골격 - Ω 경로) ===
+    const createWhale3DSkeleton = () => {
+      const verts = [];
+      const idxs = [];
+      let vOff = 0;
+
+      // 3D 회전 적용 박스 (병합용)
+      const addBox = (cx, cy, cz, sx, sy, sz, rx = 0, ry = 0, rz = 0) => {
+        const hw = sx / 2, hh = sy / 2, hd = sz / 2;
+        const base = vOff;
+        const cX = Math.cos(rx), sX = Math.sin(rx);
+        const cY = Math.cos(ry), sY = Math.sin(ry);
+        const cZ = Math.cos(rz), sZ = Math.sin(rz);
+        const m00 = cY * cZ, m01 = sX * sY * cZ - cX * sZ, m02 = cX * sY * cZ + sX * sZ;
+        const m10 = cY * sZ, m11 = sX * sY * sZ + cX * cZ, m12 = cX * sY * sZ - sX * cZ;
+        const m20 = -sY, m21 = sX * cY, m22 = cX * cY;
+        for (const [lx, ly, lz] of [
+          [-hw, -hh, -hd], [hw, -hh, -hd], [hw, hh, -hd], [-hw, hh, -hd],
+          [-hw, -hh, hd], [hw, -hh, hd], [hw, hh, hd], [-hw, hh, hd],
+        ]) {
+          verts.push(
+            m00 * lx + m01 * ly + m02 * lz + cx,
+            m10 * lx + m11 * ly + m12 * lz + cy,
+            m20 * lx + m21 * ly + m22 * lz + cz,
+          );
+          vOff++;
+        }
+        for (const i of [0,1,2,0,2,3, 4,6,5,4,7,6, 0,4,5,0,5,1, 2,6,7,2,7,3, 0,3,7,0,7,4, 1,5,6,1,6,2]) {
+          idxs.push(base + i);
+        }
       };
 
-      // --- 척추 (Spine) ---
-      const spine = [];
-      const spineLen = 14;
-      const spineN = 50;
-      for (let i = 0; i <= spineN; i++) {
-        const t = i / spineN;
-        const x = (t - 0.35) * spineLen;
-        const y = Math.sin(t * Math.PI * 0.25) * 0.6 - t * t * 0.4;
-        spine.push(new THREE.Vector3(x, y, 0));
-      }
-      addCurve(spine);
+      // Ω 경로 함수
+      const ARC_R = 2.8, Y_OFF = 0.3;
+      const spinePt = (t) => {
+        const a = Math.PI * (0.08 + t * 0.84);
+        let x = -ARC_R * Math.cos(a), y = ARC_R * Math.sin(a);
+        if (t < 0.08) { const c = (0.08 - t) / 0.08; y -= c * c * 0.6; }
+        if (t > 0.92) { const c = (t - 0.92) / 0.08; y -= c * c * 0.6; }
+        return [x, y + Y_OFF];
+      };
+      const spineTan = (t) => {
+        const d = 0.002;
+        const [x1, y1] = spinePt(Math.max(0, t - d));
+        const [x2, y2] = spinePt(Math.min(1, t + d));
+        const dx = x2 - x1, dy = y2 - y1, len = Math.sqrt(dx * dx + dy * dy) || 1;
+        return [dx / len, dy / len];
+      };
 
-      // 척추 돌기 (등쪽 + 배쪽)
-      for (let i = 2; i < spineN; i += 2) {
-        const sp = spine[i];
-        const progress = i / spineN;
-        const size = (progress < 0.6 ? 0.2 + progress * 0.3 : 0.38 * (1 - (progress - 0.6) / 0.4)) * 0.8;
-        addLine(sp, new THREE.Vector3(sp.x, sp.y + size, sp.z));
-        if (progress > 0.15 && progress < 0.7) {
-          addLine(sp, new THREE.Vector3(sp.x, sp.y - size * 0.5, sp.z));
+      // --- 척추 (40개 척추골) ---
+      const numV = 40;
+      for (let i = 0; i < numV; i++) {
+        const t = i / (numV - 1);
+        const [px, py] = spinePt(t);
+        const [tx, ty] = spineTan(t);
+        const ang = Math.atan2(ty, tx);
+        const nx = -ty, ny = tx; // 바깥쪽 법선
+        // 크기 변화: 머리~몸통 크고, 꼬리로 갈수록 작아짐
+        const s = t < 0.12 ? 0.6 + (t / 0.12) * 0.4 : t < 0.5 ? 1.0 : 1.0 - ((t - 0.5) / 0.5) * 0.65;
+
+        // 척추체
+        addBox(px, py, 0, 0.14 * s, 0.09 * s, 0.12 * s, 0, 0, ang);
+        // 극돌기 (등쪽 - 바깥 방향)
+        const ph = 0.08 + s * 0.14;
+        addBox(px + nx * (0.045 * s + ph / 2), py + ny * (0.045 * s + ph / 2), 0, 0.035 * s, ph, 0.03 * s, 0, 0, ang);
+        // 횡돌기 (흉추 영역만)
+        if (t > 0.08 && t < 0.52) {
+          const tpL = 0.05 * s;
+          for (const side of [-1, 1])
+            addBox(px, py, side * (0.06 * s + tpL / 2), 0.03 * s, 0.025 * s, tpL, 0, 0, ang);
         }
       }
 
-      // --- 두개골 (Skull) ---
-      const head = spine[0];
-      const jawLen = 3.8;
+      // --- 갈비뼈 (15쌍) ---
+      for (let r = 0; r < 15; r++) {
+        const rt = r / 14;
+        const spT = 0.08 + rt * 0.44;
+        const [spx, spy] = spinePt(spT);
+        const [tx, ty] = spineTan(spT);
+        const inX = ty, inY = -tx; // 안쪽(호 중심 방향) 법선
+        const ss = Math.sin(rt * Math.PI);
+        const ribL = (ss * 1.0 + 0.15) * 1.2;
 
-      // 상악 (Upper jaw) - 양쪽
-      const upperL = [], upperR = [];
-      for (let i = 0; i <= 12; i++) {
-        const t = i / 12;
-        const x = head.x - t * jawLen;
-        const y = head.y + 0.15 - t * 0.1 - Math.pow(t, 2) * 0.08;
-        const zw = 0.2 * (1 - t * 0.6);
-        upperL.push(new THREE.Vector3(x, y, zw));
-        upperR.push(new THREE.Vector3(x, y, -zw));
-      }
-      addCurve(upperL);
-      addCurve(upperR);
-      // 상악 끝을 연결
-      addLine(upperL[upperL.length - 1], upperR[upperR.length - 1]);
+        for (const side of [-1, 1]) {
+          for (let s = 0; s < 8; s++) {
+            const t1 = s / 8, t2 = (s + 1) / 8;
+            const r1x = spx + inX * Math.sin(t1 * Math.PI * 0.5) * ribL;
+            const r1y = spy + inY * Math.sin(t1 * Math.PI * 0.5) * ribL;
+            const r1z = side * Math.sin(t1 * Math.PI * 0.35) * ribL * 0.5;
+            const r2x = spx + inX * Math.sin(t2 * Math.PI * 0.5) * ribL;
+            const r2y = spy + inY * Math.sin(t2 * Math.PI * 0.5) * ribL;
+            const r2z = side * Math.sin(t2 * Math.PI * 0.35) * ribL * 0.5;
 
-      // 상악 가로대
-      for (let i = 3; i < 12; i += 3) {
-        addLine(upperL[i], upperR[i]);
-      }
-
-      // 하악 (Mandible) - 양쪽으로 활처럼 벌어짐
-      const lowerL = [], lowerR = [];
-      for (let i = 0; i <= 14; i++) {
-        const t = i / 14;
-        const x = head.x - 0.2 - t * jawLen * 0.85;
-        const y = head.y - 0.25 - Math.sin(t * Math.PI * 0.4) * 0.5;
-        const z = Math.sin(t * Math.PI) * 0.65;
-        lowerL.push(new THREE.Vector3(x, y, z));
-        lowerR.push(new THREE.Vector3(x, y, -z));
-      }
-      addCurve(lowerL);
-      addCurve(lowerR);
-
-      // 하악-두개골 연결
-      addLine(head, lowerL[0]);
-      addLine(head, lowerR[0]);
-      // 하악 끝-상악 끝 연결
-      addLine(lowerL[lowerL.length - 1], upperL[upperL.length - 1]);
-      addLine(lowerR[lowerR.length - 1], upperR[upperR.length - 1]);
-
-      // 두개골 후방 (뒤통수) 연결
-      const skullBack1 = new THREE.Vector3(head.x + 0.3, head.y + 0.35, 0.3);
-      const skullBack2 = new THREE.Vector3(head.x + 0.3, head.y + 0.35, -0.3);
-      addLine(head, skullBack1);
-      addLine(head, skullBack2);
-      addLine(skullBack1, skullBack2);
-      addLine(skullBack1, upperL[0]);
-      addLine(skullBack2, upperR[0]);
-
-      // --- 갈비뼈 (Ribs) - 16쌍 ---
-      const ribStartT = 0.08;
-      const ribEndT = 0.52;
-      const numRibs = 16;
-
-      for (let r = 0; r < numRibs; r++) {
-        const rt = r / (numRibs - 1);
-        const spineT = ribStartT + rt * (ribEndT - ribStartT);
-        const si = Math.min(Math.floor(spineT * spineN), spine.length - 1);
-        const sp = spine[si];
-
-        const sizeScale = Math.sin(rt * Math.PI);
-        const ribH = sizeScale * 1.9 + 0.25;
-        const ribW = sizeScale * 0.95 + 0.12;
-
-        for (let side = -1; side <= 1; side += 2) {
-          const ribPts = [];
-          const ribSegs = 10;
-          for (let s = 0; s <= ribSegs; s++) {
-            const st = s / ribSegs;
-            ribPts.push(new THREE.Vector3(
-              sp.x + Math.sin(st * 0.3) * 0.05,
-              sp.y - Math.sin(st * Math.PI * 0.55) * ribH,
-              side * Math.sin(st * Math.PI * 0.45) * ribW,
-            ));
+            const dx = r2x - r1x, dy = r2y - r1y, dz = r2z - r1z;
+            const segL = Math.sqrt(dx * dx + dy * dy + dz * dz) || 0.01;
+            const thick = 0.022 * (1 - t1 * 0.4) * (ss * 0.7 + 0.3);
+            addBox(
+              (r1x + r2x) / 2, (r1y + r2y) / 2, (r1z + r2z) / 2,
+              segL, thick, thick,
+              0, -Math.atan2(dz, Math.sqrt(dx * dx + dy * dy)), Math.atan2(dy, dx),
+            );
           }
-          addCurve(ribPts);
         }
       }
 
-      // --- 견갑골 + 가슴지느러미 뼈 ---
-      const pecIdx = Math.floor(0.13 * spineN);
-      const psp = spine[pecIdx];
+      // --- 두개골 ---
+      const [hx, hy] = spinePt(0);
+      const [htx, hty] = spineTan(0);
+      const hAng = Math.atan2(hty, htx);
+      const fX = -htx, fY = -hty; // 앞쪽 방향
+      const uX = -hty, uY = htx;  // 위쪽 방향
 
-      for (let side = -1; side <= 1; side += 2) {
-        // 견갑골
-        const scapA = new THREE.Vector3(psp.x - 0.1, psp.y - 0.35, side * 0.55);
-        const scapB = new THREE.Vector3(psp.x + 0.25, psp.y - 0.85, side * 0.75);
-        addLine(new THREE.Vector3(psp.x, psp.y, side * 0.35), scapA);
-        addLine(scapA, scapB);
+      // 두개골 본체
+      addBox(hx + fX * 0.18, hy + fY * 0.18, 0, 0.3, 0.14, 0.18, 0, 0, hAng);
+      // 안와(눈구멍) 영역
+      addBox(hx + fX * 0.1 + uX * 0.02, hy + fY * 0.1 + uY * 0.02, 0.07, 0.08, 0.05, 0.04, 0, 0, hAng);
+      addBox(hx + fX * 0.1 + uX * 0.02, hy + fY * 0.1 + uY * 0.02, -0.07, 0.08, 0.05, 0.04, 0, 0, hAng);
 
-        // 상완골
-        const humerus = new THREE.Vector3(psp.x + 0.15, psp.y - 1.3, side * 0.95);
-        addLine(scapB, humerus);
+      // 상악 (주둥이 - 7 세그먼트)
+      const jLen = 0.9;
+      for (let j = 0; j < 7; j++) {
+        const jt = j / 7;
+        const taper = 1 - jt * 0.55;
+        const o1 = 0.3 + jt * jLen, o2 = 0.3 + (j + 1) / 7 * jLen;
+        addBox(
+          hx + fX * (o1 + o2) / 2, hy + fY * (o1 + o2) / 2 + uY * 0.01, 0,
+          jLen / 7, 0.03 * taper, 0.1 * taper, 0, 0, hAng,
+        );
+      }
 
-        // 요골/척골
-        const radius = new THREE.Vector3(psp.x + 0.45, psp.y - 1.65, side * 1.0);
-        const ulna = new THREE.Vector3(psp.x + 0.05, psp.y - 1.7, side * 1.1);
-        addLine(humerus, radius);
-        addLine(humerus, ulna);
-
-        // 지골 (4개)
-        for (let f = 0; f < 4; f++) {
-          const ft = f / 3;
-          const base = new THREE.Vector3(
-            radius.x * (1 - ft) + ulna.x * ft,
-            humerus.y - 0.55,
-            side * (0.9 + ft * 0.12),
+      // 하악 (양쪽 턱뼈 - 활 모양으로 벌어짐)
+      for (const side of [-1, 1]) {
+        for (let m = 0; m < 9; m++) {
+          const mt = m / 9, mt2 = (m + 1) / 9;
+          const sp1 = Math.sin(mt * Math.PI) * 0.15, sp2 = Math.sin(mt2 * Math.PI) * 0.15;
+          const dr1 = Math.sin(mt * Math.PI * 0.4) * 0.12, dr2 = Math.sin(mt2 * Math.PI * 0.4) * 0.12;
+          const fw1 = 0.18 + mt * jLen * 0.85, fw2 = 0.18 + mt2 * jLen * 0.85;
+          const mx1 = hx + fX * fw1 - uX * dr1, my1 = hy + fY * fw1 - uY * dr1, mz1 = side * sp1;
+          const mx2 = hx + fX * fw2 - uX * dr2, my2 = hy + fY * fw2 - uY * dr2, mz2 = side * sp2;
+          const dx = mx2 - mx1, dy = my2 - my1, dz = mz2 - mz1;
+          const len = Math.sqrt(dx * dx + dy * dy + dz * dz) || 0.01;
+          addBox(
+            (mx1 + mx2) / 2, (my1 + my2) / 2, (mz1 + mz2) / 2,
+            len, 0.02, 0.02,
+            0, -Math.atan2(dz, Math.sqrt(dx * dx + dy * dy)), Math.atan2(dy, dx),
           );
-          const tip = new THREE.Vector3(base.x + 0.2, base.y - 0.55, base.z + side * 0.03);
-          const mid = new THREE.Vector3((base.x + tip.x) / 2, (base.y + tip.y) / 2 - 0.05, (base.z + tip.z) / 2);
-          addLine(radius, base);
-          addLine(base, mid);
-          addLine(mid, tip);
         }
       }
 
-      // --- 꼬리뼈 미판 (Tail Fluke 연결) ---
-      const tailStart = Math.floor(0.75 * spineN);
-      const tailEnd = spine[spineN];
-      // 꼬리 끝에서 위아래로 펼쳐지는 구조
-      const flukeUp = new THREE.Vector3(tailEnd.x + 0.8, tailEnd.y + 0.7, 0);
-      const flukeDown = new THREE.Vector3(tailEnd.x + 0.8, tailEnd.y - 0.9, 0);
-      addLine(tailEnd, flukeUp);
-      addLine(tailEnd, flukeDown);
-      // 미판 뼈 갈래
-      for (let f = 0; f < 3; f++) {
-        const ft = (f + 1) / 4;
-        addLine(tailEnd, new THREE.Vector3(tailEnd.x + 0.5 + ft * 0.4, tailEnd.y + ft * 0.8, (f - 1) * 0.15));
-        addLine(tailEnd, new THREE.Vector3(tailEnd.x + 0.5 + ft * 0.4, tailEnd.y - ft * 1.0, (f - 1) * 0.15));
+      // --- 견갑골 + 가슴지느러미 ---
+      const pecT = 0.12;
+      const [ppx, ppy] = spinePt(pecT);
+      const [ptx, pty] = spineTan(pecT);
+      const piX = pty, piY = -ptx;
+      for (const side of [-1, 1]) {
+        const scX = ppx + piX * 0.12, scY = ppy + piY * 0.12;
+        addBox(scX, scY, side * 0.1, 0.1, 0.06, 0.04, 0, 0, Math.atan2(pty, ptx) + 0.3);
+        const huX = scX + piX * 0.12, huY = scY + piY * 0.12;
+        addBox(huX, huY, side * 0.15, 0.08, 0.025, 0.025, 0, 0, Math.atan2(pty, ptx) + 0.5);
+        for (let f = 0; f < 4; f++) {
+          const fo = (f - 1.5) * 0.02;
+          addBox(huX + piX * 0.1, huY + piY * 0.1, side * 0.18 + fo, 0.06, 0.012, 0.012, 0, 0, Math.atan2(pty, ptx) + 0.6);
+        }
       }
 
-      // 꼬리 쪽 V자형 chevron 뼈
-      for (let i = tailStart; i < spineN; i += 3) {
-        const sp = spine[i];
-        const progress = (i - tailStart) / (spineN - tailStart);
-        const chevSize = (1 - progress) * 0.35 + 0.05;
-        const chevL = new THREE.Vector3(sp.x + 0.05, sp.y - chevSize, 0.08);
-        const chevR = new THREE.Vector3(sp.x + 0.05, sp.y - chevSize, -0.08);
-        addLine(sp, chevL);
-        addLine(sp, chevR);
-        addLine(chevL, chevR);
+      // --- 꼬리 미판 ---
+      const [tlx, tly] = spinePt(1);
+      const [ttx2, tty2] = spineTan(1);
+      const tAng = Math.atan2(tty2, ttx2);
+      for (let f = 0; f < 5; f++) {
+        const ft = (f - 2) / 2.5;
+        const fAng = tAng + ft * 0.5;
+        addBox(tlx + Math.cos(fAng) * 0.15, tly + Math.sin(fAng) * 0.15, 0, 0.18, 0.015, 0.025, 0, 0, fAng);
+        addBox(tlx + Math.cos(fAng) * 0.3, tly + Math.sin(fAng) * 0.3, 0, 0.12, 0.01, 0.02, 0, 0, fAng);
       }
 
-      return new THREE.BufferGeometry().setFromPoints(pts);
+      const geo = new THREE.BufferGeometry();
+      geo.setAttribute('position', new THREE.Float32BufferAttribute(verts, 3));
+      geo.setIndex(idxs);
+      geo.computeVertexNormals();
+      return geo;
     };
 
-    const whaleGeometry = createWhaleSkeletonLines();
-    const whaleMaterial = new THREE.LineBasicMaterial({
+    const whaleGeo = createWhale3DSkeleton();
+
+    // 투명 면 메시
+    const whaleMeshMat = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       transparent: true,
-      opacity: 0.35,
-      linewidth: 1,
+      opacity: 0.04,
+      side: THREE.DoubleSide,
+      depthWrite: false,
     });
-    const whaleSkeleton = new THREE.LineSegments(whaleGeometry, whaleMaterial);
-    whaleSkeleton.scale.set(0.55, 0.55, 0.55);
-    whaleSkeleton.position.set(0.8, 0.8, -2.5);
-    whaleSkeleton.rotation.y = -0.3;
-    whaleSkeleton.rotation.x = 0.05;
-    scene.add(whaleSkeleton);
+    const whaleMesh = new THREE.Mesh(whaleGeo, whaleMeshMat);
+
+    // 엣지 와이어프레임
+    const whaleEdgeGeo = new THREE.EdgesGeometry(whaleGeo, 15);
+    const whaleEdgeMat = new THREE.LineBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      opacity: 0.3,
+    });
+    const whaleEdges = new THREE.LineSegments(whaleEdgeGeo, whaleEdgeMat);
+
+    const whaleGroup = new THREE.Group();
+    whaleGroup.add(whaleMesh);
+    whaleGroup.add(whaleEdges);
+    whaleGroup.position.z = -1.5;
+    scene.add(whaleGroup);
 
     // 원형 파티클 효과 (Circle)
     const circleCount = 50;
@@ -664,10 +679,10 @@ function HeroSection() {
       edgesMaterial.opacity = 0.4 + Math.sin(time * 2.0) * 0.15;
 
       // 고래 뼈 둥둥 뜨는 애니메이션
-      whaleSkeleton.position.y = 0.8 + Math.sin(time * 0.4) * 0.25;
-      whaleSkeleton.rotation.y = -0.3 + Math.sin(time * 0.15) * 0.08;
-      whaleSkeleton.rotation.z = Math.sin(time * 0.25 + 1.0) * 0.02;
-      whaleMaterial.opacity = 0.3 + Math.sin(time * 0.6) * 0.08;
+      whaleGroup.position.y = Math.sin(time * 0.35) * 0.2;
+      whaleGroup.rotation.z = Math.sin(time * 0.2 + 0.5) * 0.015;
+      whaleEdgeMat.opacity = 0.25 + Math.sin(time * 0.5) * 0.08;
+      whaleMeshMat.opacity = 0.03 + Math.sin(time * 0.5) * 0.015;
 
       // 원형 파티클 애니메이션
       circleGroup.rotation.y += 0.002;
@@ -694,7 +709,7 @@ function HeroSection() {
     window.addEventListener('resize', handleResize);
 
     // Cleanup
-    sceneRef.current = { renderer, handleResize, animationId: () => animationId, diamondGeometry, diamondMaterial, edgesGeometry, edgesMaterial, blueprintEdgesMaterial, pavilionLinesGeometry, pavilionLinesMaterial, innerMaterial, circleGroup, envGeometry, envMaterial, whaleGeometry, whaleMaterial };
+    sceneRef.current = { renderer, handleResize, animationId: () => animationId, diamondGeometry, diamondMaterial, edgesGeometry, edgesMaterial, blueprintEdgesMaterial, pavilionLinesGeometry, pavilionLinesMaterial, innerMaterial, circleGroup, envGeometry, envMaterial, whaleGeo, whaleMeshMat, whaleEdgeGeo, whaleEdgeMat };
     }); // end of import('three').then()
 
     return () => {
@@ -718,8 +733,10 @@ function HeroSection() {
         });
         refs.envGeometry.dispose();
         refs.envMaterial.dispose();
-        refs.whaleGeometry.dispose();
-        refs.whaleMaterial.dispose();
+        refs.whaleGeo.dispose();
+        refs.whaleMeshMat.dispose();
+        refs.whaleEdgeGeo.dispose();
+        refs.whaleEdgeMat.dispose();
       }
     };
   }, []);
