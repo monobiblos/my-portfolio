@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -6,9 +6,13 @@ import Card from '@mui/material/Card';
 import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import Grid from '@mui/material/Grid';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
 import Skeleton from '@mui/material/Skeleton';
 import { supabase } from '../utils/supabase';
 import DesignDetailModal from '../components/ui/design-detail-modal';
+
+const CATEGORIES = ['ALL', 'WEB', 'SNS', 'PRINT', 'ETC'];
 
 /**
  * DesignsPage 컴포넌트 - Designs 상세 페이지
@@ -23,6 +27,7 @@ function DesignsPage() {
   const [loading, setLoading] = useState(true);
   const [selectedDesign, setSelectedDesign] = useState(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState(0);
 
   useEffect(() => {
     fetchDesigns();
@@ -45,6 +50,12 @@ function DesignsPage() {
     }
   };
 
+  const filteredDesigns = useMemo(() => {
+    const category = CATEGORIES[activeTab];
+    if (category === 'ALL') return designs;
+    return designs.filter((d) => (d.category || 'WEB') === category);
+  }, [designs, activeTab]);
+
   const handleCardClick = (design) => {
     setSelectedDesign(design);
     setModalOpen(true);
@@ -64,7 +75,7 @@ function DesignsPage() {
       }}
     >
       <Container maxWidth="lg">
-        <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
+        <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
           <Typography
             variant="overline"
             sx={{
@@ -100,6 +111,28 @@ function DesignsPage() {
           </Typography>
         </Box>
 
+        {/* 카테고리 탭 */}
+        <Box sx={{ display: 'flex', justifyContent: 'center', mb: { xs: 3, md: 4 } }}>
+          <Tabs
+            value={activeTab}
+            onChange={(e, v) => setActiveTab(v)}
+            sx={{
+              '& .MuiTab-root': {
+                color: 'text.secondary',
+                fontWeight: 600,
+                letterSpacing: '0.1em',
+                minWidth: { xs: 60, md: 80 },
+                '&.Mui-selected': { color: 'primary.main' },
+              },
+              '& .MuiTabs-indicator': { backgroundColor: 'primary.main' },
+            }}
+          >
+            {CATEGORIES.map((cat) => (
+              <Tab key={cat} label={cat} />
+            ))}
+          </Tabs>
+        </Box>
+
         {loading ? (
           <Grid container spacing={4}>
             {[1, 2, 3, 4, 5, 6, 7, 8].map((item) => (
@@ -113,7 +146,7 @@ function DesignsPage() {
               </Grid>
             ))}
           </Grid>
-        ) : designs.length === 0 ? (
+        ) : filteredDesigns.length === 0 ? (
           <Box sx={{ textAlign: 'center', py: 8 }}>
             <Typography
               variant="h3"
@@ -122,12 +155,12 @@ function DesignsPage() {
                 fontSize: { xs: '1.25rem', md: '1.5rem' },
               }}
             >
-              아직 등록된 디자인이 없습니다
+              {activeTab === 0 ? '아직 등록된 디자인이 없습니다' : `${CATEGORIES[activeTab]} 카테고리에 등록된 디자인이 없습니다`}
             </Typography>
           </Box>
         ) : (
           <Grid container spacing={4}>
-            {designs.map((design) => (
+            {filteredDesigns.map((design) => (
               <Grid key={design.id} size={{ xs: 6, sm: 4, lg: 3 }}>
                 <Card
                   onClick={() => handleCardClick(design)}

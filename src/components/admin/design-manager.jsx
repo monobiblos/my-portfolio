@@ -8,6 +8,11 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import FormControl from '@mui/material/FormControl';
+import Chip from '@mui/material/Chip';
 import Switch from '@mui/material/Switch';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
@@ -22,10 +27,18 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { supabase } from '../../utils/supabase';
 import ImageUpload from './image-upload';
 
+const CATEGORY_OPTIONS = [
+  { value: 'WEB', label: 'WEB' },
+  { value: 'SNS', label: 'SNS' },
+  { value: 'PRINT', label: 'PRINT' },
+  { value: 'ETC', label: 'ETC' },
+];
+
 const emptyDesign = {
   title: '',
   description: '',
   image_url: '',
+  category: 'WEB',
   is_published: true,
   sort_order: 0,
 };
@@ -79,6 +92,7 @@ function DesignManager() {
       title: design.title || '',
       description: design.description || '',
       image_url: design.image_url || '',
+      category: design.category || 'WEB',
       is_published: design.is_published ?? true,
       sort_order: design.sort_order ?? 0,
     });
@@ -96,6 +110,7 @@ function DesignManager() {
       title: formData.title.trim(),
       description: formData.description.trim() || null,
       image_url: formData.image_url.trim() || null,
+      category: formData.category || 'WEB',
       is_published: formData.is_published,
       sort_order: Number(formData.sort_order) || 0,
     };
@@ -215,9 +230,12 @@ function DesignManager() {
                     </Box>
                   </Box>
                   <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                      순서: {design.sort_order}
-                    </Typography>
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                      <Chip label={design.category || 'WEB'} size="small" sx={{ fontSize: '0.7rem', height: 22 }} />
+                      <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                        순서: {design.sort_order}
+                      </Typography>
+                    </Box>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
                       <Typography variant="caption" sx={{ color: design.is_published ? 'success.main' : 'text.secondary' }}>
                         {design.is_published ? '공개' : '비공개'}
@@ -238,6 +256,14 @@ function DesignManager() {
         <DialogContent sx={{ display: 'flex', flexDirection: 'column', gap: 2, pt: '16px !important' }}>
           <TextField fullWidth required name="title" label="디자인 제목" value={formData.title} onChange={handleInputChange} />
           <TextField fullWidth name="description" label="설명" multiline rows={3} value={formData.description} onChange={handleInputChange} />
+          <FormControl fullWidth>
+            <InputLabel>카테고리</InputLabel>
+            <Select name="category" value={formData.category} label="카테고리" onChange={handleInputChange}>
+              {CATEGORY_OPTIONS.map((opt) => (
+                <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+              ))}
+            </Select>
+          </FormControl>
           <ImageUpload value={formData.image_url} onChange={(url) => setFormData((prev) => ({ ...prev, image_url: url || '' }))} folder="designs" label="디자인 이미지" />
           <TextField fullWidth name="sort_order" label="정렬 순서" type="number" value={formData.sort_order} onChange={handleInputChange} />
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
