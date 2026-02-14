@@ -458,6 +458,11 @@ function HeroSection() {
       pinkLight.intensity = 1.2 + Math.sin(time * 2.5) * 0.5;
       blueLight.intensity = 1.2 + Math.cos(time * 2) * 0.5;
 
+      // 다이아몬드 자체 shimmer 효과
+      diamondMaterial.envMapIntensity = 3.5 + Math.sin(time * 1.8) * 0.8;
+      diamondMaterial.specularIntensity = 2.0 + Math.sin(time * 2.5 + 1.0) * 0.5;
+      edgesMaterial.opacity = 0.4 + Math.sin(time * 2.0) * 0.15;
+
       // 원형 파티클 애니메이션
       circleGroup.rotation.y += 0.002;
       circleGroup.children.forEach((circle) => {
@@ -535,30 +540,6 @@ function HeroSection() {
           width: '100%',
           height: '100%',
           zIndex: 1,
-        }}
-      />
-
-      {/* Shimmer Overlay Effect */}
-      <Box
-        sx={{
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          zIndex: 2,
-          pointerEvents: 'none',
-          background: 'linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.03) 45%, rgba(196, 181, 253, 0.08) 50%, rgba(255, 255, 255, 0.03) 55%, transparent 60%)',
-          backgroundSize: '200% 100%',
-          animation: 'shimmer 4s infinite linear',
-          '@keyframes shimmer': {
-            '0%': {
-              backgroundPosition: '200% 0',
-            },
-            '100%': {
-              backgroundPosition: '-200% 0',
-            },
-          },
         }}
       />
 
