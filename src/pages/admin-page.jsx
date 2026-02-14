@@ -13,6 +13,7 @@ import ProjectManager from '../components/admin/project-manager';
 import DesignManager from '../components/admin/design-manager';
 import AboutManager from '../components/admin/about-manager';
 import GuestbookManager from '../components/admin/guestbook-manager';
+import SocialLinkManager from '../components/admin/social-link-manager';
 
 const ADMIN_PASSWORD_HASH = '372698ec836c29a92e938223c5fb64c26be26cc4fc8e2041b501fdd5b390ebf3';
 
@@ -127,6 +128,7 @@ function AdminPage() {
             <Tab label="디자인 관리" />
             <Tab label="소개 관리" />
             <Tab label="방명록 관리" />
+            <Tab label="소셜 링크" />
           </Tabs>
         </Card>
 
@@ -134,6 +136,7 @@ function AdminPage() {
         {activeTab === 1 && <DesignManager />}
         {activeTab === 2 && <AboutManager />}
         {activeTab === 3 && <GuestbookManager />}
+        {activeTab === 4 && <SocialLinkManager />}
       </Container>
     </Box>
   );

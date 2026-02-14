@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, memo, useMemo } from 'react';
+import { useState, useEffect, useCallback, memo } from 'react';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -17,6 +17,8 @@ import GitHubIcon from '@mui/icons-material/GitHub';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
+import YouTubeIcon from '@mui/icons-material/YouTube';
+import LanguageIcon from '@mui/icons-material/Language';
 import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
 import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
@@ -226,17 +228,65 @@ function ContactSection() {
     sns_account: '',
   });
 
-  // useMemo로 소셜 링크 캐싱
-  const socialLinks = useMemo(() => [
+  // 소셜 링크 state
+  const [socialLinks, setSocialLinks] = useState([
     { icon: <GitHubIcon />, url: 'https://github.com', label: 'GitHub' },
     { icon: <LinkedInIcon />, url: 'https://linkedin.com', label: 'LinkedIn' },
     { icon: <TwitterIcon />, url: 'https://twitter.com', label: 'Twitter' },
     { icon: <InstagramIcon />, url: 'https://instagram.com', label: 'Instagram' },
-  ], []);
+  ]);
 
   useEffect(() => {
     fetchGuestbookEntries();
+    fetchSocialLinks();
   }, []);
+
+  const getPlatformIcon = useCallback((platform) => {
+    const icons = {
+      github: <GitHubIcon />,
+      linkedin: <LinkedInIcon />,
+      twitter: <TwitterIcon />,
+      instagram: <InstagramIcon />,
+      youtube: <YouTubeIcon />,
+      email: <EmailIcon />,
+      website: <LanguageIcon />,
+    };
+    return icons[platform] || <LinkIcon />;
+  }, []);
+
+  const getPlatformLabel = useCallback((platform) => {
+    const labels = {
+      github: 'GitHub',
+      linkedin: 'LinkedIn',
+      twitter: 'Twitter',
+      instagram: 'Instagram',
+      youtube: 'YouTube',
+      email: 'Email',
+      website: 'Website',
+    };
+    return labels[platform] || platform;
+  }, []);
+
+  const fetchSocialLinks = useCallback(async () => {
+    try {
+      const { data, error } = await supabase
+        .from('social_links')
+        .select('*')
+        .eq('is_active', true)
+        .order('sort_order', { ascending: true });
+
+      if (error) throw error;
+      if (data && data.length > 0) {
+        setSocialLinks(data.map((link) => ({
+          icon: getPlatformIcon(link.platform),
+          url: link.url,
+          label: getPlatformLabel(link.platform),
+        })));
+      }
+    } catch (err) {
+      console.error('소셜 링크 로딩 실패:', err);
+    }
+  }, [getPlatformIcon, getPlatformLabel]);
 
   const fetchGuestbookEntries = useCallback(async () => {
     setLoading(true);
