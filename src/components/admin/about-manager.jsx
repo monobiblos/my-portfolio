@@ -77,6 +77,8 @@ function AboutManager() {
           major: data.major || '',
           experience: data.experience || '',
           photo: data.photo || '',
+          resume_url: data.resume_url || '',
+          portfolio_url: data.portfolio_url || '',
         });
       }
     } catch (err) {
