@@ -723,7 +723,7 @@ function AboutPage() {
             </Typography>
             <Box sx={{ display: 'flex', gap: 2, justifyContent: 'center', flexWrap: 'wrap' }}>
               {basicInfo.resume_url && (
-                <Button variant="contained" href={basicInfo.resume_url} target="_blank" rel="noopener noreferrer" startIcon={<DescriptionIcon />}>
+                <Button variant="contained" href={basicInfo.resume_url} target="_blank" rel="noopener noreferrer" startIcon={<DescriptionIcon />} sx={{ '&:hover': { color: '#fff' } }}>
                   이력서 다운받기
                 </Button>
               )}

@@ -9,6 +9,7 @@ import Fade from '@mui/material/Fade';
 import { Link } from 'react-router-dom';
 import { getHomeSections } from '../../data/portfolio-data';
 import { supabase } from '../../utils/supabase';
+import WaveBackground from '../common/wave-background';
 
 /**
  * AboutSection 컴포넌트 - 간단한 자기소개 섹션
@@ -52,8 +53,11 @@ const AboutSection = memo(function AboutSection() {
       sx={{
         py: { xs: 8, md: 12 },
         backgroundColor: 'background.paper',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      <WaveBackground />
       <Container maxWidth="md" sx={{ position: 'relative' }}>
         {/* 배경 꽃 일러스트 */}
         <Box

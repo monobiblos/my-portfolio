@@ -15,6 +15,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../utils/supabase';
+import WaveBackground from '../common/wave-background';
 
 /**
  * ProjectsSection 컴포넌트 - 대표작 미리보기 섹션
@@ -57,8 +58,11 @@ function ProjectsSection() {
       sx={{
         py: { xs: 8, md: 12 },
         backgroundColor: 'background.paper',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      <WaveBackground />
       <Container maxWidth="lg">
         <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
           <Typography

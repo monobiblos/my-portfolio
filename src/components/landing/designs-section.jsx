@@ -11,6 +11,7 @@ import Skeleton from '@mui/material/Skeleton';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../utils/supabase';
 import DesignDetailModal from '../ui/design-detail-modal';
+import WaveBackground from '../common/wave-background';
 
 /**
  * DesignsSection 컴포넌트 - 디자인 갤러리 미리보기 섹션
@@ -65,8 +66,11 @@ function DesignsSection() {
       sx={{
         py: { xs: 8, md: 12 },
         backgroundColor: 'background.default',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      <WaveBackground />
       <Container maxWidth="lg">
         <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
           <Typography

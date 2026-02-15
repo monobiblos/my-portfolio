@@ -19,6 +19,7 @@ import PhotoCameraIcon from '@mui/icons-material/PhotoCamera';
 import DrawIcon from '@mui/icons-material/Draw';
 import TableChartIcon from '@mui/icons-material/TableChart';
 import { categoryColors, getHomeSkills, getCategories } from '../../data/portfolio-data';
+import WaveBackground from '../common/wave-background';
 
 /**
  * SkillCard 컴포넌트 - 개별 스킬 카드 (메모이제이션)
@@ -272,8 +273,11 @@ const SkillTreeSection = memo(function SkillTreeSection() {
       sx={{
         py: { xs: 8, md: 12 },
         backgroundColor: 'background.default',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      <WaveBackground />
       <Container maxWidth="lg">
         {/* 헤더 */}
         <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>

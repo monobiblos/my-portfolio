@@ -23,6 +23,7 @@ import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
 import SendIcon from '@mui/icons-material/Send';
 import { supabase } from '../../utils/supabase';
+import WaveBackground from '../common/wave-background';
 
 /**
  * GuestbookEntry 컴포넌트 - 개별 방명록 항목 (메모이제이션)
@@ -336,9 +337,12 @@ function ContactSection() {
       sx={{
         py: { xs: 8, md: 12 },
         backgroundColor: 'background.paper',
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
-      <Container maxWidth="lg">
+      <WaveBackground />
+      <Container maxWidth="lg" sx={{ position: 'relative' }}>
         <Typography
           variant="overline"
           component="span"
