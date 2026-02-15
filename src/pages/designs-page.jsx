@@ -11,6 +11,7 @@ import Tab from '@mui/material/Tab';
 import Skeleton from '@mui/material/Skeleton';
 import { supabase } from '../utils/supabase';
 import DesignDetailModal from '../components/ui/design-detail-modal';
+import WaveBackground from '../components/common/wave-background';
 
 const CATEGORIES = ['ALL', 'WEB', 'SNS', 'PRINT', 'ETC'];
 
@@ -72,8 +73,11 @@ function DesignsPage() {
       sx={{
         minHeight: '100vh',
         py: { xs: 10, md: 12 },
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      <WaveBackground top />
       <Container maxWidth="lg">
         <Box sx={{ textAlign: 'center', mb: { xs: 4, md: 6 } }}>
           <Typography

@@ -14,6 +14,7 @@ import DescriptionIcon from '@mui/icons-material/Description';
 import GitHubIcon from '@mui/icons-material/GitHub';
 import Button from '@mui/material/Button';
 import { supabase } from '../utils/supabase';
+import WaveBackground from '../components/common/wave-background';
 
 /**
  * ProjectsPage 컴포넌트 - Projects 상세 페이지
@@ -54,8 +55,11 @@ function ProjectsPage() {
       sx={{
         minHeight: '100vh',
         py: { xs: 10, md: 12 },
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      <WaveBackground top />
       <Container maxWidth="lg">
         <Box sx={{ textAlign: 'center', mb: { xs: 6, md: 8 } }}>
           <Typography

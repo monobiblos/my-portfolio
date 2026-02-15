@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, memo, useMemo, useRef } from 'react';
+import WaveBackground from '../components/common/wave-background';
 import Box from '@mui/material/Box';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
@@ -620,8 +621,11 @@ function AboutPage() {
       sx={{
         minHeight: '100vh',
         py: { xs: 10, md: 12 },
+        position: 'relative',
+        overflow: 'hidden',
       }}
     >
+      <WaveBackground top />
       <Container maxWidth="md">
         {/* 헤더 */}
         <Typography
