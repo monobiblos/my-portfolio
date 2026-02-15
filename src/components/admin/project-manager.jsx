@@ -30,6 +30,7 @@ const emptyProject = {
   thumbnail_url: '',
   detail_url: '',
   doc_url: '',
+  github_url: '',
   tech_stack: '',
   is_published: true,
   sort_order: 0,
@@ -86,6 +87,7 @@ function ProjectManager() {
       thumbnail_url: project.thumbnail_url || '',
       detail_url: project.detail_url || '',
       doc_url: project.doc_url || '',
+      github_url: project.github_url || '',
       tech_stack: Array.isArray(project.tech_stack) ? project.tech_stack.join(', ') : '',
       is_published: project.is_published ?? true,
       sort_order: project.sort_order ?? 0,
@@ -106,6 +108,7 @@ function ProjectManager() {
       thumbnail_url: formData.thumbnail_url.trim() || null,
       detail_url: formData.detail_url.trim() || null,
       doc_url: formData.doc_url.trim() || null,
+      github_url: formData.github_url.trim() || null,
       tech_stack: formData.tech_stack
         ? formData.tech_stack.split(',').map((s) => s.trim()).filter(Boolean)
         : [],
@@ -258,6 +261,7 @@ function ProjectManager() {
           <TextField fullWidth name="description" label="설명" multiline rows={3} value={formData.description} onChange={handleInputChange} />
           <ImageUpload value={formData.thumbnail_url} onChange={(url) => setFormData((prev) => ({ ...prev, thumbnail_url: url || '' }))} folder="projects" label="썸네일" />
           <TextField fullWidth name="detail_url" label="프로젝트 URL" value={formData.detail_url} onChange={handleInputChange} />
+          <TextField fullWidth name="github_url" label="GitHub URL" placeholder="https://github.com/..." value={formData.github_url} onChange={handleInputChange} />
           <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 500, mt: 1 }}>
             프로젝트 설계서 (링크 또는 파일 업로드)
           </Typography>

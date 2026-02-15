@@ -11,6 +11,7 @@ import Grid from '@mui/material/Grid';
 import Skeleton from '@mui/material/Skeleton';
 import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import DescriptionIcon from '@mui/icons-material/Description';
+import GitHubIcon from '@mui/icons-material/GitHub';
 import Button from '@mui/material/Button';
 import { supabase } from '../utils/supabase';
 
@@ -223,19 +224,32 @@ function ProjectsPage() {
                         />
                       ))}
                     </Box>
-                    {project.doc_url && (
-                      <Button
-                        variant="outlined"
-                        size="small"
-                        href={project.doc_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        startIcon={<DescriptionIcon />}
-                        sx={{ mt: 2 }}
-                      >
-                        프로젝트 설계서
-                      </Button>
-                    )}
+                    <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mt: 2 }}>
+                      {project.doc_url && (
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          href={project.doc_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          startIcon={<DescriptionIcon />}
+                        >
+                          프로젝트 설계서
+                        </Button>
+                      )}
+                      {project.github_url && (
+                        <Button
+                          variant="outlined"
+                          size="small"
+                          href={project.github_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          startIcon={<GitHubIcon />}
+                        >
+                          GitHub
+                        </Button>
+                      )}
+                    </Box>
                   </CardContent>
                 </Card>
               </Grid>
