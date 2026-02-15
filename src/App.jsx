@@ -1,8 +1,8 @@
-import { lazy, Suspense } from 'react';
-import { HashRouter, Routes, Route } from 'react-router-dom';
+import { lazy, Suspense, useState, useEffect } from 'react';
+import { HashRouter, Routes, Route, useLocation } from 'react-router-dom';
 import Box from '@mui/material/Box';
-import CircularProgress from '@mui/material/CircularProgress';
 import Header from './components/common/header';
+import PageTransition from './components/common/page-transition';
 
 const HomePage = lazy(() => import('./pages/home-page'));
 const AboutPage = lazy(() => import('./pages/about-page'));
@@ -10,22 +10,41 @@ const DesignsPage = lazy(() => import('./pages/designs-page'));
 const ProjectsPage = lazy(() => import('./pages/projects-page'));
 const AdminPage = lazy(() => import('./pages/admin-page'));
 
-function LoadingFallback() {
+function AppContent() {
+  const location = useLocation();
+  const [transitioning, setTransitioning] = useState(false);
+  const [displayLocation, setDisplayLocation] = useState(location);
+
+  useEffect(() => {
+    if (location.pathname !== displayLocation.pathname) {
+      setTransitioning(true);
+      const timer = setTimeout(() => {
+        setDisplayLocation(location);
+        setTimeout(() => setTransitioning(false), 300);
+      }, 400);
+      return () => clearTimeout(timer);
+    }
+  }, [location, displayLocation.pathname]);
+
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh' }}>
-      <CircularProgress sx={{ color: 'primary.main' }} />
-    </Box>
+    <>
+      <PageTransition active={transitioning} />
+      <Header />
+      <Box sx={{ pt: { xs: 7, md: 8 } }}>
+        <Suspense fallback={<PageTransition active />}>
+          <Routes location={displayLocation}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/designs" element={<DesignsPage />} />
+            <Route path="/projects" element={<ProjectsPage />} />
+            <Route path="/admin" element={<AdminPage />} />
+          </Routes>
+        </Suspense>
+      </Box>
+    </>
   );
 }
 
-/**
- * App 컴포넌트 - 메인 애플리케이션 라우터
- *
- * Props: 없음
- *
- * Example usage:
- * <App />
- */
 function App() {
   return (
     <HashRouter>
@@ -36,18 +55,7 @@ function App() {
           backgroundColor: 'background.default',
         }}
       >
-        <Header />
-        <Box sx={{ pt: { xs: 7, md: 8 } }}>
-          <Suspense fallback={<LoadingFallback />}>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/about" element={<AboutPage />} />
-              <Route path="/designs" element={<DesignsPage />} />
-              <Route path="/projects" element={<ProjectsPage />} />
-              <Route path="/admin" element={<AdminPage />} />
-            </Routes>
-          </Suspense>
-        </Box>
+        <AppContent />
       </Box>
     </HashRouter>
   );
