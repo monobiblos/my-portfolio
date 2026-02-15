@@ -21,8 +21,6 @@ import YouTubeIcon from '@mui/icons-material/YouTube';
 import LanguageIcon from '@mui/icons-material/Language';
 import EmailIcon from '@mui/icons-material/Email';
 import PersonIcon from '@mui/icons-material/Person';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import LinkIcon from '@mui/icons-material/Link';
 import SendIcon from '@mui/icons-material/Send';
 import { supabase } from '../../utils/supabase';
 
@@ -55,43 +53,16 @@ const GuestbookEntry = memo(function GuestbookEntry({ entry, formatDate }) {
         >
           {entry.author_name}
         </Typography>
-        {entry.sns_account && (
-          <Typography
-            component="a"
-            href={entry.sns_account.startsWith('http') ? entry.sns_account : `https://instagram.com/${entry.sns_account.replace('@', '')}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${entry.author_name}님의 SNS 계정`}
-            sx={{
-              color: 'primary.main',
-              fontSize: '0.75rem',
-              textDecoration: 'none',
-              '&:hover': { textDecoration: 'underline' },
-              '&:focus': {
-                outline: '2px solid',
-                outlineColor: 'primary.main',
-                outlineOffset: '2px',
-              },
-            }}
-          >
-            {entry.sns_account}
-          </Typography>
-        )}
-      </Box>
-      {entry.hobby && (
-        <Typography sx={{ color: 'text.secondary', fontSize: '0.75rem', mb: 1 }}>
-          {entry.hobby}
+        <Typography
+          component="time"
+          dateTime={entry.created_at}
+          sx={{ color: 'text.secondary', fontSize: '0.7rem' }}
+        >
+          {formatDate(entry.created_at)}
         </Typography>
-      )}
-      <Typography sx={{ color: 'text.primary', fontSize: '0.875rem', mb: 1, lineHeight: 1.6 }}>
+      </Box>
+      <Typography sx={{ color: 'text.primary', fontSize: '0.875rem', lineHeight: 1.6 }}>
         {entry.message}
-      </Typography>
-      <Typography
-        component="time"
-        dateTime={entry.created_at}
-        sx={{ color: 'text.secondary', fontSize: '0.7rem' }}
-      >
-        {formatDate(entry.created_at)}
       </Typography>
     </Box>
   );
@@ -119,14 +90,13 @@ const GuestbookForm = memo(function GuestbookForm({
         <Box component="form" onSubmit={onSubmit} noValidate>
           <TextField
             fullWidth
-            required
             name="author_name"
             label="이름"
+            placeholder="anonymous"
             value={formData.author_name}
             onChange={onInputChange}
             inputProps={{
               'aria-label': '이름 입력',
-              'aria-required': 'true',
             }}
             InputProps={{
               startAdornment: <PersonIcon sx={{ color: 'text.secondary', mr: 1 }} aria-hidden="true" />,
@@ -148,35 +118,6 @@ const GuestbookForm = memo(function GuestbookForm({
             }}
             InputProps={{
               startAdornment: <EmailIcon sx={{ color: 'text.secondary', mr: 1, alignSelf: 'flex-start', mt: 1 }} aria-hidden="true" />,
-            }}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            name="hobby"
-            label="취미/소속 (선택)"
-            value={formData.hobby}
-            onChange={onInputChange}
-            inputProps={{
-              'aria-label': '취미 또는 소속 입력 (선택사항)',
-            }}
-            InputProps={{
-              startAdornment: <SportsEsportsIcon sx={{ color: 'text.secondary', mr: 1 }} aria-hidden="true" />,
-            }}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            name="sns_account"
-            label="SNS 계정 (선택)"
-            placeholder="@username 또는 URL"
-            value={formData.sns_account}
-            onChange={onInputChange}
-            inputProps={{
-              'aria-label': 'SNS 계정 입력 (선택사항)',
-            }}
-            InputProps={{
-              startAdornment: <LinkIcon sx={{ color: 'text.secondary', mr: 1 }} aria-hidden="true" />,
             }}
             sx={{ mb: 3 }}
           />
@@ -224,8 +165,6 @@ function ContactSection() {
   const [formData, setFormData] = useState({
     author_name: '',
     message: '',
-    hobby: '',
-    sns_account: '',
   });
 
   // 소셜 링크 state
@@ -317,8 +256,8 @@ function ContactSection() {
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
 
-    if (!formData.author_name.trim() || !formData.message.trim()) {
-      setSnackbar({ open: true, message: '이름과 메시지는 필수입니다.', severity: 'warning' });
+    if (!formData.message.trim()) {
+      setSnackbar({ open: true, message: '메시지를 입력해주세요.', severity: 'warning' });
       return;
     }
 
@@ -327,10 +266,8 @@ function ContactSection() {
       const { error } = await supabase
         .from('portfolio_guestbook')
         .insert([{
-          author_name: formData.author_name.trim(),
+          author_name: formData.author_name.trim() || 'anonymous',
           message: formData.message.trim(),
-          hobby: formData.hobby.trim() || null,
-          sns_account: formData.sns_account.trim() || null,
         }]);
 
       if (error) {
@@ -338,7 +275,7 @@ function ContactSection() {
       }
 
       setSnackbar({ open: true, message: '방명록이 등록되었습니다!', severity: 'success' });
-      setFormData({ author_name: '', message: '', hobby: '', sns_account: '' });
+      setFormData({ author_name: '', message: '' });
       fetchGuestbookEntries();
     } catch (err) {
       console.error('방명록 등록 실패:', err);

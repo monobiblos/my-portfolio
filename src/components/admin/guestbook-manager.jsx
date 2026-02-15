@@ -111,21 +111,11 @@ function GuestbookManager() {
                       <Typography sx={{ fontWeight: 600, fontSize: '0.95rem' }}>
                         {entry.author_name}
                       </Typography>
-                      {entry.sns_account && (
-                        <Typography variant="caption" sx={{ color: 'primary.main' }}>
-                          {entry.sns_account}
-                        </Typography>
-                      )}
                     </Box>
                     <IconButton size="small" color="error" onClick={() => setDeleteTarget(entry)}>
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   </Box>
-                  {entry.hobby && (
-                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', mt: 0.5 }}>
-                      {entry.hobby}
-                    </Typography>
-                  )}
                   <Typography variant="body2" sx={{ mt: 1, lineHeight: 1.6 }}>
                     {entry.message}
                   </Typography>
