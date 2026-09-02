@@ -28,7 +28,7 @@ export const aboutMeData = {
     {
       id: 'personal',
       title: 'My Favorite',
-      content: '디자인만큼 디자인성이 있는 게임이 좋아서 웬종일 전기공사만 하느라 곤란. 꽃을 좋아한다.',
+      content: '디자인만큼 디자인성이 있는 게임이 좋다. 꽃을 좋아한다.',
       showInHome: false,
     },
   ],
