@@ -4,7 +4,7 @@ import AboutSection from '../components/landing/about-section';
 import SkillTreeSection from '../components/landing/skill-tree-section';
 import DesignsSection from '../components/landing/designs-section';
 import ProjectsSection from '../components/landing/projects-section';
-import ContactSection from '../components/landing/contact-section';
+/* import ContactSection from '../components/landing/contact-section'; */
 
 /**
  * HomePage 컴포넌트 - 메인 홈 페이지
@@ -26,8 +26,8 @@ function HomePage() {
       <DesignsSection />
       <Box className="section-divider" />
       <ProjectsSection />
-      <Box className="section-divider" />
-      <ContactSection />
+      /* <Box className="section-divider" />
+      <ContactSection /> */
     </Box>
   );
 }
